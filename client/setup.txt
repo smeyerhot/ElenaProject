@@ -1,0 +1,2 @@
+Must install typescript related files via npm 
+and configure.

@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+
+  backend:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    depends_on: 
+      - mysql_db
+    networks:
+      - fullstack
+
+  nextjs:
+    ports:
+      - 3000:3000
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+    networks:
+      - fullstack
+
+  mysql_db:
+    image: mysql:5.7
+    ports: 
+      - 3306:3306
+    environment: 
+      - MYSQL_ROOT_HOST=${DB_HOST} 
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql_db:/var/lib/mysql
+    networks:
+      - fullstack
+
+volumes:
+  mysql_db:                   
+
+networks:
+  fullstack:
+    driver: bridge

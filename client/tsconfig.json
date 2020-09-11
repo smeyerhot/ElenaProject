@@ -1,0 +1,40 @@
+{
+    "strict": true,
+    "compilerOptions": {
+      "baseUrl": "src",
+      "paths": {
+        "@/components/*": [
+          "components/*"
+        ],
+        "@/utils/*": [
+          "utils/*"
+        ],
+        "@/types": [
+          "types/index"
+        ],
+        "@/gql": [
+          "gql/index"
+        ]
+      },
+      "jsx": "preserve",
+      "esModuleInterop": true,
+      "target": "es5",
+      "lib": [
+        "dom",
+        "dom.iterable",
+        "esnext"
+      ],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": false,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "isolatedModules": true
+    },
+    "include": ["src/**/*", "jest"],
+    "exclude": ["node_modules"]
+  }
+  
