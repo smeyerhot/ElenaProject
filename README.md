@@ -1,18 +1,29 @@
-# MERN Skeleton
+# Elena Project
 
-A skeleton application with basic user CRUD and auth features - developed using React, Node, Express and Mysql
+This is the final project for c520 UMass Amherst
 
 #### What you need to run this code
 1. Node (13.12.0)
 2. NPM (6.14.4) or Yarn (1.22.4)
-3. MYSQL 8
+3. MYSQL (8.0.17)
 
 ####  How to run this code
-1. Make sure MongoDB is running on your system
-2. Clone this repository
-3. Open command line in the cloned folder,
-   - To install dependencies, run ```  npm install  ``` or ``` yarn ```
-   - To run the application for development, run ```  npm run development  ``` or ``` yarn development ```
-4. Open [localhost:3000](http://localhost:3000/) in the browser
-----
-# mern-mysql
+
+cd client
+npm install
+npm run dev
+vi .env
+####  Inside of .env
+DB_HOST=localhost
+DB_DRIVER=mysql     
+DB_PORT=3306
+DB_USER=<your_mysql_username>
+DB_PASSWORD=<your_mysql_database_password> 
+DB_NAME=<your_mysql_database_name>
+PORT=5000
+
+cd server 
+npm install
+npm start
+
+
