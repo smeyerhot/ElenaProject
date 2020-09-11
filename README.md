@@ -9,10 +9,20 @@ This is the final project for c520 UMass Amherst
 
 ####  How to run this code
 
-cd client
+cd server 
+
 npm install
+
+npm start
+
+cd client
+
+npm install
+
 npm run dev
+
 vi .env
+
 ####  Inside of .env
 DB_HOST=localhost
 DB_DRIVER=mysql     
