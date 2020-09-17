@@ -34,7 +34,7 @@
       "resolveJsonModule": true,
       "isolatedModules": true
     },
-    "include": ["src/**/*", "jest"],
+    "include": ["src/**/*", "jest", "next.config.js"],
     "exclude": ["node_modules"]
   }
   

@@ -1,11 +1,11 @@
-const express = require('express')
+// const express = require('express')
 
-const customersCtrl = require('../controllers/customers.controller')
+// const customersCtrl = require('../controllers/customers.controller')
 
-const router = express.Router()
+// const router = express.Router()
 
-router.route('/api/customers')
-    .get(customersCtrl.getData)
+// router.route('/api/customers')
+//     .get(customersCtrl.getData)
     
 
-module.exports = router
+// module.exports = router

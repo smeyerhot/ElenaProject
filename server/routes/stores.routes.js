@@ -1,11 +1,11 @@
-const express = require( 'express')
-const shopCtrl = require( '../controllers/shop.controller')
+// const express = require( 'express')
+// const shopCtrl = require( '../controllers/shop.controller')
 
 
-const router = express.Router()
+// const router = express.Router()
 
-// router.route('/api/stores')
-//     .get(shopCtrl.getStores)
+// // router.route('/api/stores')
+// //     .get(shopCtrl.getStores)
     
 
-module.exports = router
+// module.exports = router

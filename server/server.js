@@ -7,10 +7,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const userRoutes = require('./routes/user.routes');
-const storeRoutes = require('./routes/stores.routes');
+// const storeRoutes = require('./routes/stores.routes');
 const authRoutes = require('./routes/auth.routes');
-const customersRoutes = require('./routes/customers.routes');
-const ordersRoutes = require('./routes/orders.routes');
+// const customersRoutes = require('./routes/customers.routes');
+// const ordersRoutes = require('./routes/orders.routes');
 const peopleRoutes = require('./routes/people.routes');
 const app = express()
 
@@ -36,9 +36,9 @@ app.use(cors(corsOptions));
 // mount routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
-app.use('/', storeRoutes)
-app.use('/', customersRoutes)
-app.use('/', ordersRoutes)
+// app.use('/', storeRoutes)
+// app.use('/', customersRoutes)
+// app.use('/', ordersRoutes)
 
 app.use('/', peopleRoutes);
 

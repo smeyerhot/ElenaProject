@@ -1,12 +1,15 @@
 FROM node:latest
 # Creating app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/app/server/
+WORKDIR /usr/src/app/server/
 
-COPY package.json /usr/src/app
-COPY .env /usr/src/app
-
+COPY package*.json ./
 RUN npm install
+COPY . ./
+
 EXPOSE 5000
 # EXPOSE 8989
-CMD ["npm", "run", "dev"]
+CMD npm start
+
+
+

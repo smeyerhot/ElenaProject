@@ -1,12 +1,12 @@
-const express = require('express')
+// const express = require('express')
 
-const ordersCtrl = require('../controllers/orders.controller')
-// const getData = require('../server')
+// const ordersCtrl = require('../controllers/orders.controller')
+// // const getData = require('../server')
 
-const router = express.Router()
+// const router = express.Router()
 
-router.route('/api/orders')
-    .get(ordersCtrl.getOrders)
+// router.route('/api/orders')
+//     .get(ordersCtrl.getOrders)
     
 
-module.exports = router
+// module.exports = router

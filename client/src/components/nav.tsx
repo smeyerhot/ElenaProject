@@ -36,6 +36,11 @@ export default function Nav() {
           <button className="btn btn-orange btn-outlined">Chat</button>
         </a>
         </Link>
+        <Link href="/map">
+        <a>
+          <button className="btn btn-orange btn-outlined">Chat</button>
+        </a>
+        </Link>
 
       </div>
     </header>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 
-const Test = () => {
+const Dummy = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -57,4 +57,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default Dummy;
