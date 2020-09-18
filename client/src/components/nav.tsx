@@ -11,7 +11,7 @@ export default function Nav() {
   }
   return (
     <header>
-        <div className="fixed flex bg-orange-500 flex-row items-center top-0 h-20 w-screen p-3">
+        <div className="flex bg-orange-500 flex-row items-center top-0 h-20 w-screen p-3">
       <Link href="/">
         <a>
           <h1 className="text-black text-3xl font-bold">Fidelity</h1>
@@ -36,11 +36,7 @@ export default function Nav() {
           <button className="btn btn-orange btn-outlined">Chat</button>
         </a>
         </Link>
-        <Link href="/map">
-        <a>
-          <button className="btn btn-orange btn-outlined">Chat</button>
-        </a>
-        </Link>
+        
 
       </div>
     </header>

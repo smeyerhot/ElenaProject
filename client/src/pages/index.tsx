@@ -10,7 +10,7 @@ let incIdx = (idx, length, setIdx) => {
 export default function Home(){
   const [customers, setCustomers] = useState({})
   let [idx, setIdx] = useState(0)
-  const api = 'http://localhost:5000/api/customers';
+  const api = 'http://localhost:5000/api/users';
 
   useEffect(() => {
 
@@ -35,7 +35,7 @@ export default function Home(){
     mapped.push(val);
   }
 
-  const listItems = mapped.map((d,idx) => <li key={idx}>{[d.contactFirstName, d.contactLastName,]}</li>);
+  const listItems = mapped.map((d,idx) => <li key={idx}>{[d.username]}</li>);
 
   return (
       <>

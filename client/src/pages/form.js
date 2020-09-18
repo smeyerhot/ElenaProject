@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 
 
-const Dummy = () => {
+const Form = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: ""
   });
-
-  const updateFormData = event =>
+  const testEvent = (e) => {
+    e.persist();
+    console.log(e);
+  };
+  const updateFormData = (event) =>
     setFormData({
       ...formData,
       [event.target.name]: event.target.value
@@ -21,16 +24,15 @@ const Dummy = () => {
     <form>
       <input
         value={firstName}
-        onChange={e => updateFormData(e)}
+        onChange={(e) => updateFormData(e)}
         placeholder="First name"
         type="text"
         name="firstName"
-        color="black"
         required
       />
       <input
         value={lastName}
-        onChange={e => updateFormData(e)}
+        onChange={(e) => updateFormData(e)}
         placeholder="Last name"
         type="text"
         name="lastName"
@@ -38,7 +40,7 @@ const Dummy = () => {
       />
       <input
         value={email}
-        onChange={e => updateFormData(e)}
+        onChange={(e) => updateFormData(e)}
         placeholder="Email address"
         type="email"
         name="email"
@@ -46,7 +48,7 @@ const Dummy = () => {
       />
       <input
         value={password}
-        onChange={e => updateFormData(e)}
+        onChange={(e) => updateFormData(e)}
         placeholder="Password"
         type="password"
         name="password"
@@ -58,4 +60,4 @@ const Dummy = () => {
   );
 };
 
-export default Dummy;
+export default Form;

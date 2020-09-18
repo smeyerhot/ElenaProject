@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cookieParser())
+// app.use(cookieParser())
 app.use(compress())
 // secure apps by setting various HTTP headers
 app.use(helmet())
