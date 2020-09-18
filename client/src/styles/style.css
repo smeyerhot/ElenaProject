@@ -13,12 +13,21 @@ html {
 .inline-block {
   @apply bg-orange-600;
 }
+
+.bodyPadding{
+  @apply py-24;
+  @apply px-4;
+}
+
 .btn {
-  @apply py-2 px-4 rounded;
+  @apply py-2;
+  @apply px-4;
+  @apply rounded;
 }
 
 .btn-orange {
-  @apply bg-orange-500 text-black;
+  @apply bg-orange-500;
+  @apply text-black;
 }
 
 .btn-orange:hover {
@@ -26,27 +35,44 @@ html {
 }
 
 .btn-disabled {
-  @apply bg-gray-400 text-white cursor-default;
+  @apply bg-gray-400;
+  @apply text-white;
+  @apply cursor-default;
 }
 
 .btn-outlined {
-  @apply border border-black text-black;
+  @apply border;
+  @apply border-black;
+  @apply text-black;
 }
 
 .btn-outlined:hover {
-  @apply bg-black text-white;
+  @apply bg-black;
+  @apply text-white;
 }
 
 .btn-large {
-  @apply py-4 px-8 text-lg;
+  @apply py-4;
+  @apply px-8;
+  @apply text-lg;
 }
 
 .input {
-  @apply block text-black bg-white border border-gray-300 rounded-lg py-2 px-4 appearance-none leading-normal;
+  @apply block;
+  @apply text-black;
+  @apply bg-white;
+  @apply border;
+  @apply border-gray-300;
+  @apply rounded-lg;
+  @apply py-2;
+  @apply px-4;
+  @apply appearance-none;
+  @apply leading-normal;
 }
 
 .input-error {
-  @apply border-2 border-red-500;
+  @apply border-2;
+  @apply border-red-500;
 }
 
 .main {
