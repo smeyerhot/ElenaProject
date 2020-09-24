@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth.routes');
 // const customersRoutes = require('./routes/customers.routes');
 // const ordersRoutes = require('./routes/orders.routes');
 const peopleRoutes = require('./routes/people.routes');
+const coordRoutes = require('./routes/coords.routes')
 const app = express()
 
 // parse body params and attach them to req.body
@@ -36,6 +37,7 @@ app.use(cors(corsOptions));
 // mount routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/', coordRoutes)
 // app.use('/', storeRoutes)
 // app.use('/', customersRoutes)
 // app.use('/', ordersRoutes)

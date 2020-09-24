@@ -4,7 +4,7 @@ import Head from 'next/head'
 import PasswordInput from '../components/passwordInput'
 
 import { useRouter } from 'next/router'
-import { signin,signout } from '../auth/api-auth'
+import { signin, signout } from '../auth/api-auth'
 
 import { UserData } from '@/types';
 
@@ -15,40 +15,12 @@ const Signin: React.FunctionComponent = () => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  // const hitLogin = () => {
-  //   if (username && password) {
-  //     tryLogin()
-  //   } else {
-  //     return false
-  //   }
-  // }
-  
+
   const tryLogin = () => {
     const credentials = {
       username,
       password,
     }
-    
-  // const clickSubmit = () => {
-  // const user = {
-  //   email: values.email || undefined,
-  //   password: values.password || undefined
-  // }
-  
-  // signin(user).then((data) => {
-  //   console.log(`data${JSON.stringify(data)}`)
-  //   console.log(typeof(data))
-  //   if (data.error) {
-  //     setValues({ ...values, error: data.error})
-  //   } else {
-  //     auth.authenticate(data, () => {
-  //       setValues({ ...values, error: '',redirectToReferrer: true})
-  //     })
-  //   }
-  // })
-// }
-
-    // signout()
     signin(credentials)
       .then(async (res) => {
         const body = await res.text()

@@ -1,5 +1,3 @@
-
-
 const Person = require("../models/people.model");
 
 
