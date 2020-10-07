@@ -1,5 +1,6 @@
 import { send } from "process";
 import React, { useState, useEffect } from 'react'
+import MyMap from '../components/map.js'
 
 
 const Form: React.FunctionComponent = () => {
@@ -47,30 +48,35 @@ const Form: React.FunctionComponent = () => {
   const { latitude, longitude } = formData;
 
   return (
-    <form>
-      <input
-        value={latitude}
-        onChange={(e) => updateFormData(e)}
-        placeholder="Latitude"
-        type="text"
-        name="latitude"
-        required
-      />
-      <input
-        value={longitude}
-        onChange={(e) => updateFormData(e)}
-        placeholder="Longitude"
-        type="text"
-        name="longitude"
-        required
+    <div>
+      
+      {typeof window !== "undefined" ? <MyMap></MyMap> : null}
+      <form>
+      
+        <input
+          value={latitude}
+          onChange={(e) => updateFormData(e)}
+          placeholder="Latitude"
+          type="text"
+          name="latitude"
+          required
         />
+        <input
+          value={longitude}
+          onChange={(e) => updateFormData(e)}
+          placeholder="Longitude"
+          type="text"
+          name="longitude"
+          required
+          />
 
-      <button
-        type="submit"
-        onClick={(e) => trySend(e)}>
-        Submit
-      </button>
-    </form>
+        <button
+          type="submit"
+          onClick={(e) => trySend(e)}>
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 
