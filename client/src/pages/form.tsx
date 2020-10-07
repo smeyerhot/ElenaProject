@@ -1,6 +1,7 @@
 import { send } from "process";
 import React, { useState, useEffect } from 'react'
-import MyMap from '../components/map.js'
+import dynamic from 'next/dynamic'
+
 
 
 const Form: React.FunctionComponent = () => {
@@ -32,7 +33,7 @@ const Form: React.FunctionComponent = () => {
 
 
 
-  
+
   
 
   const testEvent = (e) => {
@@ -46,11 +47,10 @@ const Form: React.FunctionComponent = () => {
     });
 
   const { latitude, longitude } = formData;
-
+  const DynamicMap = dynamic(() => import('../components/map'), {ssr: false});
   return (
     <div>
-      
-      {typeof window !== "undefined" ? <MyMap></MyMap> : null}
+      <DynamicMap />
       <form>
       
         <input
