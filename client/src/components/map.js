@@ -9,6 +9,13 @@ export default class MyMap extends React.Component {
     };
   }
 
+  //testing for if we want to implement users current location
+  // componentDidMount(){
+
+  //   navigator.geolocation.getCurrentPosition((position) => {
+  //     this.setPos(position.coords);
+  //   });
+  // }
   addMarker = (e) => {
     let {markers} = this.state
     if(markers.length === 2){
@@ -17,13 +24,21 @@ export default class MyMap extends React.Component {
     markers.push(e.latlng)
     this.setState({markers})
   }
-
+  // function to set a new center of map position
+  // setPos(pos){
+  //   let {position} = this.state;
+  //   position = [pos.latitude, pos.longitude];
+  //   this.setState({position})
+  // }
+  
   render() {
+    
     return (
       <Map 
         center={this.state.position} 
         onClick={this.addMarker}
-        zoom={13} 
+        zoom={14} 
+        style = {{height: '100vh', width: '100%'}}
         >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
