@@ -14,8 +14,8 @@ html {
 }
 
 .bodyPadding{
-  @apply py-24;
-  @apply px-4;
+  @apply h-auto; 
+  @apply w-full;
 }
 
 .btn {

@@ -2,6 +2,7 @@ import { send } from "process";
 import React, { useState, useEffect } from 'react'
 
 
+
 const Form: React.FunctionComponent = () => {
   const [formData, setFormData] = useState({
     latitude: 0,
@@ -31,7 +32,7 @@ const Form: React.FunctionComponent = () => {
 
 
 
-  
+
   
 
   const testEvent = (e) => {
@@ -45,32 +46,34 @@ const Form: React.FunctionComponent = () => {
     });
 
   const { latitude, longitude } = formData;
-
   return (
-    <form>
-      <input
-        value={latitude}
-        onChange={(e) => updateFormData(e)}
-        placeholder="Latitude"
-        type="text"
-        name="latitude"
-        required
-      />
-      <input
-        value={longitude}
-        onChange={(e) => updateFormData(e)}
-        placeholder="Longitude"
-        type="text"
-        name="longitude"
-        required
+    <div>
+      <form>
+      
+        <input
+          value={latitude}
+          onChange={(e) => updateFormData(e)}
+          placeholder="Latitude"
+          type="text"
+          name="latitude"
+          required
         />
+        <input
+          value={longitude}
+          onChange={(e) => updateFormData(e)}
+          placeholder="Longitude"
+          type="text"
+          name="longitude"
+          required
+          />
 
-      <button
-        type="submit"
-        onClick={(e) => trySend(e)}>
-        Submit
-      </button>
-    </form>
+        <button
+          type="submit"
+          onClick={(e) => trySend(e)}>
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 

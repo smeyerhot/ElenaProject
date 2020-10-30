@@ -1,7 +1,9 @@
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
-
+import dynamic from 'next/dynamic'
 import axios from 'axios'
+
+const DynamicMap = dynamic(() => import('../components/map'), {ssr: false});
 
 let incIdx = (idx, length, setIdx) => {
   let counter = (idx + 1) % length
@@ -38,11 +40,7 @@ export default function Home(){
   const listItems = mapped.map((d,idx) => <li key={idx}>{[d.username]}</li>);
 
   return (
-      <>
-      <div>{global()}</div>
-        {/* <NameList mapped={mapped}/> */}
-        <div> {listItems}</div>
-        </>
+    <DynamicMap />
       )
 }
 
