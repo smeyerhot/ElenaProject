@@ -1,9 +1,11 @@
 import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet"
-
+import {regIcon, startIcon, endIcon} from "./icons.js"
 export default class MyMap extends React.Component {
   constructor() {
     super();
     this.state = {
+      start: [42.3868, -72.5301],
+      end: [42.4007,-72.5162],
       position: [42.3868 , -72.5301],
       markers: [],
       path: [],
@@ -49,19 +51,14 @@ export default class MyMap extends React.Component {
       //   this.setState({grid});
       // }
       // )})
-      let {markers, path} = this.state;
-      let node = {
-        from_lat: null,
-        from_long:null,
-        to_lat: null,
-        to_long: null
-      }
-      let i =0
+      let {markers} = this.state;
+      markers.push(this.state.start);
+      markers.push(this.state.end);
+      let i = 0;
       for (let data of body.grid){
         if(i%3 === 0){
           let pos = [data.lat, data.long];
           markers.push(pos);
-          
         }
         ++i;
       }
@@ -76,8 +73,6 @@ export default class MyMap extends React.Component {
       markers = [];
       path = []
     }
-    markers.push(e.latlng);
-    console.log(e.latlng);
     let node;
     if(path.length == 0){
       node = {
@@ -117,13 +112,38 @@ export default class MyMap extends React.Component {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
-        {this.state.markers.map((position, idx) => 
-          <Marker key={`marker-${idx}`} position={position}>
-              <Popup>
-              <span>This is your node {idx} </span>
-              </Popup>
-          
-        </Marker>
+        {this.state.markers.map((position, idx) => {
+          let marker = null
+          if(position[0] === this.state.start[0] && position[1] === this.state.start[1]){
+            marker = <Marker key={`marker-${idx}`} position={position} icon = {startIcon}>
+                  <Popup>
+                  <span>This is your node {idx} </span>
+                  </Popup>
+              
+            </Marker>
+          }
+          else if(position[0] === this.state.end[0] && position[1] === this.state.end[1]){
+            marker = <Marker key={`marker-${idx}`} position={position} icon = {endIcon}>
+                  <Popup>
+                  <span>This is your node {idx} </span>
+                  </Popup>
+              
+            </Marker>
+
+          }
+          else{
+            console.log(idx);
+            marker =<Marker key={`marker-${idx}`} position={position} icon = {regIcon}>
+                  <Popup>
+                  <span>This is your node {idx} </span>
+                  </Popup>
+              
+            </Marker>
+          }
+          return marker;
+            
+        }
+        
         
         )}
         {this.state.path.map(({id, from_lat, from_long, to_lat, to_long }) => {
