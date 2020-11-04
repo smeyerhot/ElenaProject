@@ -49,7 +49,7 @@ app.listen(process.env.PORT || 5000 , (err) => {
   if (err) {
     console.log(err)
   }
-  console.info('Server started on port %s.', process.env.PORT )
+  console.info('Server started on port %s.', process.env.PORT || 5000 )
 })
 
 module.exports = app;
