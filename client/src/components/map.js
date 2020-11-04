@@ -12,6 +12,7 @@ export default class MyMap extends React.Component {
   }
   componentDidMount(){
     this.getGrid();
+    this.setState({state: this.state})
   }
   //testing for if we want to implement users current location
   // componentDidMount(){
@@ -48,16 +49,29 @@ export default class MyMap extends React.Component {
       //   this.setState({grid});
       // }
       // )})
-      let {grid} = this.state.grid;
-      grid = body.grid;
-      this.setState({grid});
+      let {markers, path} = this.state;
+      let node = {
+        from_lat: null,
+        from_long:null,
+        to_lat: null,
+        to_long: null
+      }
+      let i =0
+      for (let data of body.grid){
+        if(i%3 === 0){
+          let pos = [data.lat, data.long];
+          markers.push(pos);
+          
+        }
+        ++i;
+      }
+      this.setState({markers});
     })
   }
   
 
   addMarker = (e) => {
-    console.log(e);
-    let {markers, path} = this.state
+    let {markers, path} = this.state;
     if(markers.length === 2){
       markers = [];
       path = []
@@ -106,7 +120,7 @@ export default class MyMap extends React.Component {
         {this.state.markers.map((position, idx) => 
           <Marker key={`marker-${idx}`} position={position}>
               <Popup>
-              <span>This is your {idx == 0 ? 'start' : 'end'} point. </span>
+              <span>This is your node {idx} </span>
               </Popup>
           
         </Marker>
@@ -120,16 +134,6 @@ export default class MyMap extends React.Component {
           
         })}
 
-        {this.state.grid.map(({lat, long} ) => {
-          
-          if(lat === 42.3868 && long === -72.5301){
-            console.log(lat, long);
-            let position = {lat: lat, lng:long};
-            <Marker position={position}>      
-              </Marker>
-          }
-
-        })}
         
       </Map>
     );
