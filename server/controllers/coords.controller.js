@@ -9,17 +9,36 @@ function processCoords(req, res) {
         "grid": genGrid(startLat, startLong, endLat, endLong)
     })
 }
+//{
+//     "start": {
+//         "lat": 42.3868,
+//         "long": -72.5301
+//     },
+//     "end": {
+//         "lat": 42.4007,
+//         "long": -72.5162
+//     }
+// }
 
 function genGrid(startLat, startLong, endLat, endLong){
     let grid = [];
-
+    let step = 1/3600;
+    let borderX = 5/3600;
+    let borderY = 5/3600;
+    // let start = {
+    //     lat: parseFloat((startLat).toFixed(4)),
+    //     long: parseFloat((startLong).toFixed(4)),
+    //     neighbors: []
+    // }
+    // start.neighbors = getNeighbors(startLat, startLong);
+    // grid.push(start);
     if(startLat <= endLat){
-        for(let lat = startLat; lat <= endLat; lat = lat+1/360){
-            if (startLong <= endLong){
-                for(let long = startLong; long <= endLong; long = long+1/360){
-                    let node = {
-                        "lat": lat,
-                        "long": long,
+        for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
+            if (startLong <= endLong){ 
+                for(let long=startLong-borderY; long <= endLong+borderY; long += step){
+                    let node = { 
+                        "lat": parseFloat((lat).toFixed(4)),
+                        "long": parseFloat((long).toFixed(4)),
                         "neighbors":[]
                     }
                     node.neighbors = getNeighbors(lat, long);
@@ -28,10 +47,10 @@ function genGrid(startLat, startLong, endLat, endLong){
 
             }
             else{
-                for(let long = endLong; long >= startLong; long-1/360){
+                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
                     let node = {
-                        "lat": lat,
-                        "long": long,
+                        "lat": parseFloat((lat).toFixed(4)),
+                        "long": parseFloat((long).toFixed(4)),
                         "neighbors":[]
                     }
                     node.neighbors = getNeighbors(lat, long);
@@ -43,12 +62,12 @@ function genGrid(startLat, startLong, endLat, endLong){
 
     }
     else{
-        for(let lat = endLat; lat >= startLat; lat = lat-1/360){
+        for(let lat = endLat-borderX; lat >= startLat+borderX; lat -= step){
             if (startLong <= endLong){
-                for(let long = startLong; long <= endLong; long = long+1/360){
+                for(let long = startLong-borderY; long <= endLong +borderY; long += step){
                     let node = {
-                        "lat": lat,
-                        "long": long,
+                        "lat": parseFloat((lat).toFixed(4)),
+                        "long": parseFloat((long).toFixed(4)),
                         "neighbors":[]
                     }
                     node.neighbors = getNeighbors(lat, long);
@@ -57,10 +76,10 @@ function genGrid(startLat, startLong, endLat, endLong){
 
             }
             else{
-                for(let long = endLong; long >= startLong; long = long-1/360){
+                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
                     let node = {
-                        "lat": lat,
-                        "long": long,
+                        "lat": parseFloat((lat).toFixed(4)),
+                        "long": parseFloat((long).toFixed(4)),
                         "neighbors":[]
                     }
                     node.neighbors = getNeighbors(lat, long);
@@ -70,17 +89,23 @@ function genGrid(startLat, startLong, endLat, endLong){
 
         }
     }
-
+    // let end = {
+    //     lat: parseFloat((endLat).toFixed(4)),
+    //     long: parseFloat((endLong).toFixed(4)),
+    //     neighbors: []
+    // }
+    // end.neighbors = getNeighbors(endLat, endLong);
+    // grid.push(end);
 
     return grid;
 }
 
 function getNeighbors(lat, long){
     let neighbors = [];
-    neighbors.push({"lat": lat+1/60, "long": long});
-    neighbors.push({"lat": lat-1/60, "long": long});
-    neighbors.push({"lat": lat, "long": long+1/60});
-    neighbors.push({"lat": lat, "long": long-1/60});
+    neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat((lat-1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/3600).toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/3600).toFixed(4))});
     return neighbors;
 
 }

@@ -6,10 +6,13 @@ export default class MyMap extends React.Component {
     this.state = {
       position: [42.3868 , -72.5301],
       markers: [],
-      path: []
+      path: [],
+      grid: []
     };
   }
-
+  componentDidMount(){
+    this.getGrid();
+  }
   //testing for if we want to implement users current location
   // componentDidMount(){
 
@@ -17,13 +20,50 @@ export default class MyMap extends React.Component {
   //     this.setPos(position.coords);
   //   });
   // }
+  async getGrid(){
+    let response = await fetch('http://localhost:5000/api/coords', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        "start": {
+          "lat": 42.3868,
+          "long": -72.5301
+        },
+        "end": {
+            "lat": 42.4007,
+            "long": -72.5162
+        }
+      }),
+    }).then(async data =>  {
+      let body = await data.json();
+      // body.then(points => {
+      //   let {grid} = this.state.grid;
+
+      //   console.log(points);
+      //   grid = points;
+      //   this.setState({grid});
+      // }
+      // )})
+      let {grid} = this.state.grid;
+      grid = body.grid;
+      this.setState({grid});
+    })
+  }
+  
+
   addMarker = (e) => {
+    console.log(e);
     let {markers, path} = this.state
     if(markers.length === 2){
       markers = [];
       path = []
     }
     markers.push(e.latlng);
+    console.log(e.latlng);
     let node;
     if(path.length == 0){
       node = {
@@ -39,35 +79,25 @@ export default class MyMap extends React.Component {
       node = path[0];
       node.to_lat = e.latlng.lat;
       node.to_long = e.latlng.lng;
-    }
-    
-
-    
+    } 
     this.setState({markers, path});
   }
+
+  
   // function to set a new center of map position
   // setPos(pos){
   //   let {position} = this.state;
   //   position = [pos.latitude, pos.longitude];
   //   this.setState({position})
   // }
-  renderLine(){
-    let {path, update} = this.state
-    update = true;
-    this.setState({update});
-    if(path.length > 0){
-      return <Polyline color = "purple" positions = {path}></Polyline>
-    }
-    
-  }
+
   render() {
-    
     return (
       <Map 
         center={this.state.position} 
         onClick={this.addMarker}
         zoom={14} 
-        style = {{height: '100vh', width: '100%'}}
+        style = {{height: '84vh', width: '100%'}}
         >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -89,7 +119,17 @@ export default class MyMap extends React.Component {
           }
           
         })}
-        
+
+        {this.state.grid.map(({lat, long} ) => {
+          
+          if(lat === 42.3868 && long === -72.5301){
+            console.log(lat, long);
+            let position = {lat: lat, lng:long};
+            <Marker position={position}>      
+              </Marker>
+          }
+
+        })}
         
       </Map>
     );

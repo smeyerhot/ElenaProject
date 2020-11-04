@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import axios from 'axios'
 
 const DynamicMap = dynamic(() => import('../components/map'), {ssr: false});
+const MapInput = dynamic(()=> import('../components/mapInput'), {ssr: false})
 
 let incIdx = (idx, length, setIdx) => {
   let counter = (idx + 1) % length
@@ -12,20 +13,20 @@ let incIdx = (idx, length, setIdx) => {
 export default function Home(){
   const [customers, setCustomers] = useState({})
   let [idx, setIdx] = useState(0)
-  const api = 'http://localhost:5000/api/users';
+  // const api = 'http://localhost:5000/api/users';
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const loadChar = async () => {
-      const result = await axios(api);
-      setCustomers(result.data);
+  //   const loadChar = async () => {
+  //     const result = await axios(api);
+  //     setCustomers(result.data);
 
-      incIdx(idx, result.data.length, setIdx);
-    };
+  //     incIdx(idx, result.data.length, setIdx);
+  //   };
 
-    loadChar();
+  //   loadChar();
     
-  }, [api]);
+  // }, [api]);
 
   const mapped = []
   for (let key in customers) {
@@ -38,9 +39,12 @@ export default function Home(){
   }
 
   const listItems = mapped.map((d,idx) => <li key={idx}>{[d.username]}</li>);
-
+  
   return (
-    <DynamicMap />
+    <div>
+      <DynamicMap />
+    </div>
+    
       )
 }
 
@@ -71,8 +75,4 @@ function ListItem(props) {
     "\n" + d.creditLimit]}
   </li> )
 
-}
-
-function global() {
-  return "hello"
 }
