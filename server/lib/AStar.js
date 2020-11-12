@@ -38,10 +38,6 @@ function AStar(graph, start, end, neighbors, maxD) {
         }
         nodes.push(row);
     }
-    // console.log(nodes)
-    // let list = [10, 3, 4, 8, 2, 9, 7, 1, 2, 6, 5]
-    // list.forEach((e) => heap.push(e))
-    //forEach do once
     nodes.forEach((row) => {
         row.forEach((ele) => heap.push(ele));
     });
@@ -51,11 +47,13 @@ function AStar(graph, start, end, neighbors, maxD) {
 
     // while (heap.size()>0) {
     //     let node = heap.pop();
-    //     for (nei of graph[neighbors]) {
+    //     for (nei of neighbors[node]) {
     //         if (nei in seen) 
-    //             continue
+    //             continue;
     //         if (node.distance + 1 > maxD)
-    //             seen.add(nei.coords)
+    //             continue;
+    //         if (nei == start);
+    //             break;
             
     //     }
     // }
