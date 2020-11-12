@@ -27,6 +27,8 @@ function AStar(graph, start, end, neighbors, maxD) {
         }
     }
 
+    // We really want : new BinaryHeap((x) => x.edist);
+    // Vanilla version : new BinaryHeap((x) => x.dist);
     let heap = new BinaryHeap((x) => x.elevation);
     let seen = new Set()
     let nodes = []
