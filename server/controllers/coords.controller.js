@@ -2,6 +2,9 @@ require('dotenv').config()
 const fetch = require('node-fetch');
 const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
+const search = require('../lib/AStar')
+const astar = search.AStar;
+
 //processCoords needs to be async to get promise
 async function processCoords(req, res) {
     let startLat = req.body.start.lat;
@@ -12,6 +15,7 @@ async function processCoords(req, res) {
     await getElevation(grid);
     console.log(grid[0]);
     console.log("Horray it worked!")
+    astar();
     res.status(200).send({
         "grid": grid
     })
@@ -40,7 +44,7 @@ async function getElevation(grid) {
                     locations: body.locations,
                     key: process.env.API_KEY,
                 },
-                timeout: 1000, // milliseconds
+                timeout: 1000,
                 })
                 return response
             } catch (e) {
@@ -114,8 +118,8 @@ function getNeighbors(lat, long){
     let neighbors = [];
     neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
     neighbors.push({"lat": parseFloat((lat-1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/60).toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/60).toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/3600).toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/3600).toFixed(4))});
     return neighbors;
 
 }
