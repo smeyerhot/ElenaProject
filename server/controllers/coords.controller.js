@@ -62,6 +62,67 @@ function addElevations(graph, data) {
         graph[i].elevation = data[i].elevation;
     }
 }
+function gen2DGrid(startLat, startLong, endLat, endLong){
+    function makeNode(lat, long) {
+        let node = { 
+            "lat": parseFloat((lat).toFixed(4)),
+            "long": parseFloat((long).toFixed(4)),
+            "neighbors":[],
+            "elevation":null
+        }
+        node.neighbors = getNeighbors(lat, long);
+        grid.push(node);
+    }
+    let grid = [];
+    let step = 3/3600;
+    let deltax = (endLat - startLat) / 2;
+    let deltay = (endLong - startLong) / 2;
+    if (deltax > deltay) {
+        deltax= deltax;
+        deltay = deltay + 2*((deltax-deltay)/2);
+    }
+    else {
+        deltax = deltax+2*((deltay-deltax)/2);
+        deltay= deltay;
+    }
+    let borderX = deltax;
+    let borderY = deltay;
+    if(startLat <= endLat){
+        for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
+            if (startLong <= endLong){ 
+                for(let long=startLong-borderY; long <= endLong+borderY; long += step){
+                    makeNode(lat, long);
+                }
+
+            }
+            else{
+                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
+                    makeNode(lat, long)
+                }
+            }
+
+        }
+
+    }
+    else{
+        for(let lat = endLat-borderX; lat >= startLat+borderX; lat -= step){
+            if (startLong <= endLong){
+                for(let long = startLong-borderY; long <= endLong +borderY; long += step){
+                    makeNode(lat, long)
+                }
+
+            }
+            else{
+                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
+                    makeNode(lat, long)
+                }
+            }
+
+        }
+    }
+
+    return grid;
+}
 function genGrid(startLat, startLong, endLat, endLong){
     function makeNode(lat, long) {
         let node = { 
