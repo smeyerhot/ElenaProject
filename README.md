@@ -34,7 +34,7 @@ DB_NAME=<your_mysql_database_name>
 
 PORT=5000
 
-API_KET=<your_googlemaps_api_key>
+API_KEY=<your_googlemaps_api_key>
 
 ####  Back in /server :
 
