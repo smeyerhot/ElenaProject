@@ -125,6 +125,7 @@ function BinaryHeap(scoreFunction) {
  */
 function processNodes(grid)
 {
+    console.log('Processing nodes');
     dict = {}; // 
     var graph = [];
     console.log('processNodes grid length'+grid.length);
@@ -208,9 +209,6 @@ function aStarSearch(graph, startkey, endkey, options) {
          let key  = [neighbors[i].lat.toString(),neighbors[i].long.toString()].join(",");
         //  var neighbor_node = dict[key]; // currently only lat long
           console.log('----------key----------'+key);
-         
-        //   console.log('neighbor: '+neighbor_node.idx);
-        //   var neighbor = graph[neighbor_node.idx];
           var neighbor = dict[key];
           console.log('neighbor: '+JSON.stringify(neighbor, null, 4));
           if (neighbor.closed) {
