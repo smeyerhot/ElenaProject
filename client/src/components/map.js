@@ -33,9 +33,8 @@ export default function MyMap () {
 
     useEffect(() => {
 
-
-        
-        if(grid.length === 0){
+        if(grid.length === 0 && nodeCount === 2 && end){
+          
             async function getGrid(){
                 let response = await fetch('http://localhost:5000/api/coords', {
                     method: 'POST',
@@ -46,12 +45,12 @@ export default function MyMap () {
                     credentials: 'include',
                     body: JSON.stringify({
                       "start": {
-                        "lat": 42.3868,
-                        "long": -72.5301
+                        "lat": start.lat,
+                        "long": start.lng
                       },
                       "end": {
-                          "lat": 42.4007,
-                          "long": -72.5162
+                          "lat": end.lat,
+                          "long": end.lng
                       }
                     }),
                   }).then(async data =>  {
@@ -70,7 +69,7 @@ export default function MyMap () {
                       if(i%3 === 0){
                           
                         let pos = {lat: data.lat, lng: data.long};
-                        console.log(pos);
+                        // console.log(pos);
                         setGrid(grid => [...grid, pos]);
                       }
                       ++i;
@@ -80,7 +79,7 @@ export default function MyMap () {
             getGrid();
         }
         
-    }, []);
+    }, [nodeCount, start, end]);
   
     function handleClick(e){
         if(nodeCount <2){
