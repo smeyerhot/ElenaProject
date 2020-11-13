@@ -16,7 +16,9 @@ npm install
 
 vi .env
 
-####  Inside of .env :
+npm run start
+
+####  Inside of server/.env :
 
 DB_HOST=localhost
 
@@ -31,6 +33,8 @@ DB_PASSWORD=<your_mysql_database_password>
 DB_NAME=<your_mysql_database_name>
 
 PORT=5000
+
+API_KET=<your_googlemaps_api_key>
 
 ####  Back in /server :
 
