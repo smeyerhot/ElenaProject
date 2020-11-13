@@ -11,16 +11,20 @@ async function processCoords(req, res) {
     let startLong = req.body.start.long;
     let endLat = req.body.end.lat;
     let endLong = req.body.end.long;
-    let grid = genGrid(startLat, startLong, endLat, endLong);
-    await getElevation(grid);
-    console.log(grid[0]);
+    let grid = gen2DGrid(startLat, startLong, endLat, endLong);
+    // await getElevation(grid);
     console.log("Horray it worked!")
-    astar();
+    // astar();
+    console.log(testFunction(grid))
     res.status(200).send({
         "grid": grid
     })
 }
 
+function testFunction(node) {
+    return node[0].getNeighbors()
+    
+}
 async function getElevation(grid) {
     function Location(node) {
         this.latitude = node.lat;
@@ -62,14 +66,24 @@ function addElevations(graph, data) {
         graph[i].elevation = data[i].elevation;
     }
 }
+var coordToNeighbors = {}
+
 function gen2DGrid(startLat, startLong, endLat, endLong){
     function makeNode(lat, long) {
         let node = { 
             "lat": parseFloat((lat).toFixed(4)),
             "long": parseFloat((long).toFixed(4)),
             "neighbors":[],
-            "elevation":null
+            "elevation":null,
+            "dist":null,
+            "edist":null,
+            "parent":null,
+            getNeighbors: function() {
+                return node.neighbors.map((nei) => [nei.lat, nei.long].join(","))
+            }
         }
+        let key = [node.lat.toString(),node.long.toString()].join(",")
+        coordToNeighbors[key] = node;
         node.neighbors = getNeighbors(lat, long);
         grid.push(node);
     }
@@ -123,58 +137,11 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
 
     return grid;
 }
-function genGrid(startLat, startLong, endLat, endLong){
-    function makeNode(lat, long) {
-        let node = { 
-            "lat": parseFloat((lat).toFixed(4)),
-            "long": parseFloat((long).toFixed(4)),
-            "neighbors":[],
-            "elevation":null
-        }
-        node.neighbors = getNeighbors(lat, long);
-        grid.push(node);
-    }
-    let grid = [];
-    let step = 3/3600;
-    let borderX = 5/3600;
-    let borderY = 5/3600;
-    if(startLat <= endLat){
-        for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
-            if (startLong <= endLong){ 
-                for(let long=startLong-borderY; long <= endLong+borderY; long += step){
-                    makeNode(lat, long);
-                }
 
-            }
-            else{
-                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    makeNode(lat, long)
-                }
-            }
 
-        }
-
-    }
-    else{
-        for(let lat = endLat-borderX; lat >= startLat+borderX; lat -= step){
-            if (startLong <= endLong){
-                for(let long = startLong-borderY; long <= endLong +borderY; long += step){
-                    makeNode(lat, long)
-                }
-
-            }
-            else{
-                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    makeNode(lat, long)
-                }
-            }
-
-        }
-    }
-
-    return grid;
+function stringToCoord(str) {
+    return str.split(",")
 }
-
 function getNeighbors(lat, long){
     let neighbors = [];
     neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
