@@ -12,11 +12,11 @@ async function processCoords(req, res) {
     let endLat = req.body.end.lat;
     let endLong = req.body.end.long;
     let grid = gen2DGrid(startLat, startLong, endLat, endLong);
-    console.log(grid.length);
+    //console.log(grid.length);
     //await getElevation(grid);
-    console.log("Horray it worked!")
+    //console.log("Horray it worked!")
     // astar();
-    console.log(testFunction(grid))
+    //console.log(testFunction(grid))
     res.status(200).send({
         "grid": grid
     })
@@ -92,7 +92,6 @@ function addElevations(graph, data, idx) {
 var coordToNeighbors = {}
 
 function gen2DGrid(startLat, startLong, endLat, endLong){
-
     function makeNode(lat, long) {
         let node = { 
             "lat": parseFloat((lat).toFixed(4)),
@@ -175,10 +174,10 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
 
 function getNeighbors(lat, long){
     let neighbors = [];
-    neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat((lat-1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/3600).toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/3600).toFixed(4))});
+    neighbors.push({"lat": parseFloat((lat+3/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat((lat-3/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+3/3600).toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-3/3600).toFixed(4))});
     return neighbors;
 
 }
@@ -195,5 +194,6 @@ function convertToDMS(degreeDecimal){
     return {degrees, minutes, seconds};
 }
 module.exports = {
-    processCoords
+    processCoords,
+    gen2DGrid
 }

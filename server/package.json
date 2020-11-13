@@ -32,11 +32,11 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "mocha": "^8.1.0"
+    "mocha": "^8.2.1"
   },
   "scripts": {
     "build": "tsc --project ./",
-    "test": "mocha --require babel-register tests/*.js --exit",
+    "test": "mocha",
     "start": "nodemon server.js"
   },
   "author": "",
