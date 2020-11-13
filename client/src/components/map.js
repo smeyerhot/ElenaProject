@@ -127,7 +127,7 @@ export default function MyMap () {
             }
         })}
         {grid.map((position, idx) => {
-            console.log(position);
+            //console.log(position);
           return <Marker key={`marker-${idx}`} position={position}>
                   <Popup>
                   <span>This is your node {idx} </span>
