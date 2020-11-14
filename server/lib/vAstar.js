@@ -173,7 +173,7 @@ function getHeap() {
 }
 
 // graph and start and end node of the grid
-function aStarSearch(graph, startkey, endkey, options,dict) {
+function aStarSearch(startkey, endkey, options,dict) {
       let start = dict[startkey];
       let end =  dict[endkey];
       // console.log('aStarSearch start '+JSON.stringify(start, null, 4));
@@ -270,7 +270,7 @@ var heuristics = {
     manhattan: function(node1 , node2){
         var d1 = Math.abs(node2.lat - node1.lat);
         var d2 = Math.abs(node2.long - node1.long);
-        var d3 = Math.abs(node1.elevation -node2.elevation);
+        var d3 = Math.abs(node1.elevation - node2.elevation);
         return d1 + d2;
     },
     haversine_distance: function(node1,node2) {

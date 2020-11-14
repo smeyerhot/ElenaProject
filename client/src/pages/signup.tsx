@@ -59,11 +59,11 @@ const Signup: React.FunctionComponent = () => {
   return (
     <div className="main flex flex-col items-center w-4/5 md:w-2/5 mx-auto">
       <Head>
-        <title>Signup - Fidelity</title>
+        <title>Signup - Elena</title>
       </Head>
       <div className="flex-grow-2" />
-      <h1 className="text-4xl font-bold leading-none">Fidelity</h1>
-      <h3 className="text-sm mb-2">The Fun Little App</h3>
+      <h1 className="text-4xl font-bold leading-none">Elena</h1>
+      <h3 className="text-sm mb-2">The UMass Elevation Tracker</h3>
       <label className="w-full pl-1" htmlFor="email-input">
         Email
       </label>
