@@ -63,7 +63,7 @@ export default function MyMap () {
                     //   this.setState({grid});
                     // }
                     // )})
-                    let grid = []
+                    console.log(body)
                     let i = 0;
                     for (let data of body.grid){
                       if(i%3 === 0){
