@@ -42,7 +42,7 @@ async function processCoords(req, res) {
     // get the start and end key to pass to the search algo
     let start_key = [info.startLat,info.startLong].join(",")
     let end_key = [info.endLat,info.endLong].join(",")
-    let data = algo(graph,start_key,end_key,{},coordToNeighbors);
+    let data = algo(start_key,end_key,{},coordToNeighbors);
 
     // upto
     res.status(200).send({
