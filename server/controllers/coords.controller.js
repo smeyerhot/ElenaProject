@@ -92,11 +92,13 @@ function addElevations(graph, data, idx) {
 var coordToNeighbors = {}
 
 function gen2DGrid(startLat, startLong, endLat, endLong){
-    function makeNode(lat, long) {
+    function makeNode(lat, long, borderX, borderY) {
         let node = { 
             "lat": parseFloat((lat).toFixed(4)),
             "long": parseFloat((long).toFixed(4)),
             "neighbors":[],
+            "borderX": borderX,
+            "borderY": borderY,
             "elevation":null,
             "dist":null,
             "edist":null,
@@ -125,19 +127,18 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
     let borderX = Math.abs(deltax);
     let borderY = Math.abs(deltay);
     
-
     if(startLat <= endLat){
         for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
             if (startLong <= endLong){ 
                 for(let long=startLong-borderY; long <= endLong+borderY; long += step){
-                    makeNode(lat, long);
+                    makeNode(lat, long, borderX, borderY);
                     
                 }
 
             }
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    makeNode(lat, long);
+                    makeNode(lat, long, borderX, borderY);
                     
                 }
             }
@@ -151,7 +152,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             if (startLong <= endLong){
                 for(let long = startLong-borderY; long <= endLong +borderY; long += step){
 
-                    makeNode(lat, long);
+                    makeNode(lat, long, borderX, borderY);
                     
                 }
 
@@ -159,7 +160,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
                     
-                    makeNode(lat, long);
+                    makeNode(lat, long, borderX, borderY);
                     
                 }
             }
