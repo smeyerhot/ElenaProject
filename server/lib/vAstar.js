@@ -123,10 +123,10 @@ function BinaryHeap(scoreFunction) {
  * @param {*} grid - grid2DGen
  * returns the graph from the grid
  */
-function processNodes(grid)
+function processNodes(grid, dict)
 {
     console.log('Processing nodes');
-    dict = {}; // 
+
     var graph = [];
     console.log('processNodes grid length'+grid.length);
     for(gridNode of grid)
@@ -136,7 +136,7 @@ function processNodes(grid)
         graph.push(node);
         let key = [node.lat.toString(),node.long.toString()].join(",")
         dict[key]=node;
-        console.log('dict: '+key);
+        // console.log('dict: '+key);
     }
     return graph;
 
@@ -173,65 +173,71 @@ function getHeap() {
 }
 
 // graph and start and end node of the grid
-function aStarSearch(graph, startkey, endkey, options) {
+function aStarSearch(graph, startkey, endkey, options,dict) {
       let start = dict[startkey];
       let end =  dict[endkey];
-      console.log('aStarSearch start '+JSON.stringify(start, null, 4));
-      console.log('aStarSearch  end '+JSON.stringify(start, null, 4));
-      var heuristic =  heuristics.haversine_distance;
+      // console.log('aStarSearch start '+JSON.stringify(start, null, 4));
+      // console.log('aStarSearch  end '+JSON.stringify(start, null, 4));
+      var heuristic =  heuristics.manhattan;
       var closest = options.closest || false;
       var openHeap = getHeap(); 
       openHeap.push(start);
       var closestNode = start; // set the start node to be the closest if required
       start.h = heuristic(start, end); 
-      console.log('original heuristic:'+start.h);
+      // console.log('original heuristic:'+start.h);
 
       while (openHeap.size() > 0) {
         // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
         var currentNode = openHeap.pop();
         // End case -- result has been found, return the traced path.
-        if (currentNode === end) {
+        if (currentNode == end) {
             // console.log('path found:'+pathTo(currentNode))
-            return pathTo(currentNode);
+            return pathTo(end);
         }     
         // Normal case -- move currentNode from open to closed, process each of its neighbors.
         currentNode.closed = true; 
-        console.log('*****************************************');
-        console.log('currentNode: '+JSON.stringify(currentNode, null, 4));
-        console.log('*****************************************');
+        // console.log('*****************************************');
+        // console.log('currentNode: '+JSON.stringify(currentNode, null, 4));
+        // console.log('*****************************************');
         // Find all neighbors for the current node.
         var neighbors = currentNode["neighbors"];
-        console.log('neighbors: '+neighbors.length); // obtain neighbors
+        // console.log('neighbors: '+neighbors.length); // obtain neighbors
         // console.log('neighbors: '+neighbors[0].lat); // obtain neighbors
-        //iterate thorugh neighbors
-        for (var i = 0; i < neighbors.length; ++i) {
+        //iterate through neighbors
+        for (var i = 0; i < neighbors.length; i++) {
          // find neighbor node in graph corresponding to key
-         let key  = [neighbors[i].lat.toString(),neighbors[i].long.toString()].join(",");
+        //  let key  = [neighbors[i].lat.toString(),neighbors[i].long.toString()].join(",");
+          let key  = neighbors[i]
         //  var neighbor_node = dict[key]; // currently only lat long
-          console.log('----------key----------'+key);
+          // console.log('----------key----------'+key);
+          if (!dict.hasOwnProperty(key)) {
+            console.log(key)
+            console.log("Node not in graph!")
+            continue
+          }
           var neighbor = dict[key];
-          console.log('neighbor: '+JSON.stringify(neighbor, null, 4));
+          // console.log('neighbor: '+JSON.stringify(neighbor, null, 4));
           if (neighbor.closed) {
             // Not a valid node to process, skip to next neighbor.
-            console.log('closed: '+neighbor.idx);
+            // console.log('closed: '+neighbor.idx);
             continue;
           }
           // The g score is the shortest distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
           // upto currnode+cost between curr and neighbor
-          var gScore = currentNode.g + heuristic.haversine_distance(currentNode,neighbor);
+          var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var beenVisited = neighbor.visited;
-          console.log('beenVisited initial: '+beenVisited);
+          // console.log('beenVisited initial: '+beenVisited);
           if (!beenVisited || gScore < neighbor.g) {
             // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
             neighbor.visited = true;
-            console.log('beenVisited set now: '+ neighbor.visited);
+            // console.log('beenVisited set now: '+ neighbor.visited);
             neighbor.parent = currentNode;
             neighbor.h = neighbor.h || heuristic(neighbor, end);
-            console.log('h score '+neighbor.h);
+            // console.log('h score '+neighbor.h);
             neighbor.g = gScore;
             neighbor.f = neighbor.g + neighbor.h;
-            console.log('f score '+neighbor.f);
+            // console.log('f score '+neighbor.f);
             if (closest) {
               // If the neighbour is closer than the current closestNode or if it's equally close but has
               // a cheaper path than the current closest node then it becomes the closest node
@@ -241,7 +247,7 @@ function aStarSearch(graph, startkey, endkey, options) {
             }
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
-              console.log('pushing node in heap');
+              // console.log('pushing node in heap');
               openHeap.push(neighbor);
             } else {
               // Already seen the node, but since it has been rescored we need to reorder it in the heap
@@ -257,18 +263,17 @@ function aStarSearch(graph, startkey, endkey, options) {
       }
   
     //   // No result was found - empty array signifies failure to find path.
-      return [];
+      return pathTo(currentNode);
     }
 
-const heuristics = {    
-    manhattan:function(node1 , node2)
-    {
+var heuristics = {    
+    manhattan: function(node1 , node2){
         var d1 = Math.abs(node2.lat - node1.lat);
         var d2 = Math.abs(node2.long - node1.long);
+        var d3 = Math.abs(node1.elevation -node2.elevation);
         return d1 + d2;
     },
-    haversine_distance:function(node1,node2) 
-    {
+    haversine_distance: function(node1,node2) {
         var R = 3958.8; // Radius of the Earth in miles
         var lat_1 = node1.lat * (Math.PI/180); // degrees to radians
         var lat_2 = node2.lat * (Math.PI/180); // degrees to radians
@@ -277,7 +282,7 @@ const heuristics = {
         var d = 2 * R * Math.asin(Math.sqrt(Math.sin(lat_1/2)*Math.sin(d_latitude/2)+Math.cos(lat_1)*Math.cos(lat_2)*Math.sin(d_longitude/2)*Math.sin(d_longitude/2)));
         // fixing it to 4 decimal values
         d = d.toFixed(4) // took assumption to 4 decimal places
-        return d;
+        return parseInt(d);
     }
 }
 

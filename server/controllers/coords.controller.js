@@ -3,15 +3,16 @@ const fetch = require('node-fetch');
 const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
 const search = require('../lib/AStar')
+
 const astar = search.AStar;
 
 // vanilla 
 const vsearch = require('../lib/vAstar'); 
+const { Console } = require('console');
 const vprocessNodes = vsearch.processNodes; 
 const algo = vsearch.aStarSearch;
 
 var coordToNeighbors = {}
-var start_end = {}
 
 //processCoords needs to be async to get promise
 async function processCoords(req, res) {
@@ -19,38 +20,59 @@ async function processCoords(req, res) {
     let startLong = req.body.start.long;
     let endLat = req.body.end.lat;
     let endLong = req.body.end.long;
-    let grid = gen2DGrid(startLat, startLong, endLat, endLong);
+
+    let [grid,info] = gen2DGrid(startLat, startLong, endLat, endLong)
+    
+
+    // console.log([startLat,startLong, endLat, endLong])
+    // console.log(info.startLat,info.startLong,info.endLat,info.endLong)
+    addNeighbors(grid)
+    // console.log(grid)
     // console.log('AA grid 0'+JSON.stringify(grid[0], null, 4));
     // console.log(grid.length);
     //await getElevation(grid);
     console.log("Horray it worked!");
     // astar();
     // vanilla 
-    graph = vprocessNodes(grid);
+    let flattenedGrid = grid.flat();
+    await getElevation(flattenedGrid)
+    console.log(flattenedGrid[0])
+    graph = vprocessNodes(flattenedGrid, coordToNeighbors);
     // console.log('graph in coords'+JSON.stringify(graph[0], null, 4));
-    // get the nodes corresponding to lat long values
-    // how do i pass start and end node from here?
-
-    let slat = parseFloat((startLat).toFixed(4));
-    let slong = parseFloat((startLong).toFixed(4));
-    // console.log('coordToNeighbors start'+slat+" "+slong);
-    let elat = parseFloat((endLat).toFixed(4));
-    let elong = parseFloat((endLong).toFixed(4));
     // get the start and end key to pass to the search algo
-    let start_key = [slat.toString(),slong.toString()].join(",")
-    let end_key = [elat.toString(),elong.toString()].join(",")
+    let start_key = [info.startLat,info.startLong].join(",")
+    let end_key = [info.endLat,info.endLong].join(",")
+    let data = algo(graph,start_key,end_key,{},coordToNeighbors);
 
-    algo(graph,start_key,end_key,{});
     // upto
-
-    console.log(testFunction(grid))
     res.status(200).send({
-        "grid": grid
+        "grid": data
     })
 }
 
-function testFunction(node) {
-    return node[0].getNeighbors()
+function addNeighbors(grid) {
+    const direcs = [[-1,0],[1,0],[0,-1],[0,1]]
+    m = grid.length
+    n = grid[0].length
+    for (let row = 0; row < m; row++){
+        for (let col = 0; col < n; col++) {
+
+            let node = grid[row][col]
+            for (direc of direcs){
+                let newRow = row + direc[0]
+                let newCol = col + direc[1]
+                let inbound1 = (newRow < m && newRow >= 0)
+                let inbound2 = (newCol < n && newCol >= 0)
+                if (inbound1 && inbound2) { 
+                    
+                    let neiLat = grid[newRow][newCol].lat
+                    let neiLong =  grid[newRow][newCol].long
+                    node.neighbors.push([neiLat,neiLong].join(","))
+                    // node.neighbors.push(nei)
+                }
+           }
+        }
+    }
 }
 async function getElevation(grid) {
     function Location(node) {
@@ -112,26 +134,51 @@ function addElevations(graph, data, idx) {
     }
 }
 
+function checkNode(currentBest, lat, long, startLat, startLong, endLat, endLong) {
+    let startEst = Math.abs(startLat-lat)+Math.abs(startLong-long);
+    let endEst = Math.abs(endLat-lat)+Math.abs(endLong-long);
+    if (startEst < currentBest.startVal) {
+        currentBest.startVal = startEst;
+        currentBest.startLong =parseFloat((long).toFixed(4));
+        currentBest.startLat = parseFloat((lat).toFixed(4));
+    }
+    if (endEst < currentBest.endVal) {
+        currentBest.endVal = endEst;
+        currentBest.endLong =parseFloat((long).toFixed(4));
+        currentBest.endLat = parseFloat((lat).toFixed(4));
+    }
+}
+function makeNode(lat, long) {
+    let node = { 
+        "lat": parseFloat((lat).toFixed(4)),
+        "long": parseFloat((long).toFixed(4)),
+        "neighbors":[],
+        "elevation":null,
+        "dist":null,
+        "edist":null,
+        "parent":null,
+        // getNeighbors: function() {
+        //     // return node.neighbors.map((nei) => [nei.lat, nei.long].join(","))
+        //     return node.neighbors;
+        // }
+    }
+    let key = [node.lat.toString(),node.long.toString()].join(",")
+    coordToNeighbors[key] = node;
+    // console.log('2D gen key '+key);
+    // console.log('inside grid2Dgen'+key+' and '+JSON.stringify(coordToNeighbors[key], null, 4));
+    // node.neighbors = getNeighbors(lat, long);
+    // grid.push(node);
+    return node
+}
 function gen2DGrid(startLat, startLong, endLat, endLong){
-    function makeNode(lat, long) {
-        let node = { 
-            "lat": parseFloat((lat).toFixed(4)),
-            "long": parseFloat((long).toFixed(4)),
-            "neighbors":[],
-            "elevation":null,
-            "dist":null,
-            "edist":null,
-            "parent":null,
-            getNeighbors: function() {
-                return node.neighbors.map((nei) => [nei.lat, nei.long].join(","))
-            }
-        }
-        let key = [node.lat.toString(),node.long.toString()].join(",")
-        coordToNeighbors[key] = node;
-        // console.log('2D gen key '+key);
-        // console.log('inside grid2Dgen'+key+' and '+JSON.stringify(coordToNeighbors[key], null, 4));
-        node.neighbors = getNeighbors(lat, long);
-        grid.push(node);
+    
+    let currentBest = {
+        "endVal":Infinity,
+        "endLat":null,
+        "endLong":null,
+        "startVal":Infinity,
+        "startLat":null,
+        "startLong":null
     }
     let grid = [];
     let step = 3/3600;
@@ -139,75 +186,91 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
     let deltay = (endLong - startLong) / 2;
     if (deltax > deltay) {
         deltax= deltax;
-        deltay = deltay + 2*((deltax-deltay)/2);
+        deltay = deltay + 2*((Math.abs(deltax-deltay))/2);
     }
     else {
-        deltax = deltax+2*((deltay-deltax)/2);
+        deltax = deltax+2*((Math.abs(deltay-deltax))/2);
         deltay= deltay;
     }
 
     // AA could we push start and end node to the grid?
     //chnaged here for vanilla
-    makeNode(startLat, startLong);
-    makeNode(endLat, endLong);
+    // makeNode(startLat, startLong);
+    // makeNode(endLat, endLong);
 
     let borderX = Math.abs(deltax);
     let borderY = Math.abs(deltay);
+    let betterGrid = [];
+    let startNode = null;
+    let endNode = null;
     
+
+    // let latStart = null;
+    // let latEnd = null;
+    // let longStart = null;
+    // let longEnd = null;
     if(startLat <= endLat){
         for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
+            let row = [];
             if (startLong <= endLong){ 
                 for(let long=startLong-borderY; long <= endLong+borderY; long += step){
-                    makeNode(lat, long);
+                    checkNode(currentBest,lat, long, startLat, startLong, endLat, endLong)
+                
+                    row.push(makeNode(lat, long));
                     
                 }
 
             }
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    makeNode(lat, long);
+                    checkNode(currentBest,lat, long, startLat, startLong, endLat, endLong)
+                
+                    row.push(makeNode(lat, long));
                     
                 }
             }
-            
+            betterGrid.push(row)
         }
+       
 
     }
     else{
         for(let lat = startLat+borderX; lat >= endLat-borderX; lat -= step){
-            
+            let row = [];
             if (startLong <= endLong){
                 for(let long = startLong-borderY; long <= endLong +borderY; long += step){
-
-                    makeNode(lat, long);
+                    checkNode(currentBest,lat, long, startLat, startLong, endLat, endLong)
+                
+                    row.push(makeNode(lat, long));
                     
                 }
 
             }
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    
-                    makeNode(lat, long);
+                    checkNode(currentBest,lat, long, startLat, startLong, endLat, endLong)
+                
+                        row.push(makeNode(lat, long));
                     
                 }
             }
             
-
+            betterGrid.push(row)
         }
     }
-
-    return grid;
+    
+    return [betterGrid, currentBest];
 }
 
-function getNeighbors(lat, long){
-    let neighbors = [];
-    neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat((lat-1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/3600).toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/3600).toFixed(4))});
-    return neighbors;
+// function getNeighbors(lat, long){
+//     let neighbors = [];
+//     neighbors.push({"lat": parseFloat((lat+1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+//     neighbors.push({"lat": parseFloat((lat-1/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+//     neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+1/3600).toFixed(4))});
+//     neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-1/3600).toFixed(4))});
+//     return neighbors;
 
-}
+// }
 function convertToDD(degrees, minutes, seconds){
     return degrees + (minutes/60) + (seconds/360);
 }
