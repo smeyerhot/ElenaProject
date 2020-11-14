@@ -63,16 +63,15 @@ export default function MyMap () {
                     //   this.setState({grid});
                     // }
                     // )})
-                    let i = 0;
-                    for (let data of body.grid){
-                      if(i%3 === 0){
-                          
-                        let pos = {lat: data.lat, lng: data.long};
-                        // console.log(pos);
-                        setGrid(grid => [...grid, pos]);
-                      }
-                      ++i;
+                    setPath(path => [...path, start])
+                    for (let data of body.grid){    
+                      let pos = {lat: data.lat, lng: data.long};
+                      // console.log(pos);
+                      setPath(path => [...path, pos]);
+                      // setGrid(grid => [...grid, pos]);
+
                     }
+                    setPath(path => [...path, end])
                   })
             }
             getGrid();
@@ -83,7 +82,7 @@ export default function MyMap () {
     function handleClick(e){
         if(nodeCount <2){
             setMarkers(markers => [...markers, e.latlng]);
-            setPath(path => [...path, e.latlng]);
+            
             setNodeCount(nodeCount +1);
         }
         else{
@@ -125,7 +124,7 @@ export default function MyMap () {
                 return <Polyline key = {idx} color = "purple" positions = {line}></Polyline>
             }
         })}
-        {grid.map((position, idx) => {
+        {/* {grid.map((position, idx) => {
             //console.log(position);
           return <Marker key={`marker-${idx}`} position={position}>
                   <Popup>
@@ -133,7 +132,7 @@ export default function MyMap () {
                   </Popup>
               
             </Marker>
-        })}
+        })} */}
 
       </Map>
     );
