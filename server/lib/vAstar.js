@@ -279,10 +279,12 @@ var heuristics = {
         var lat_2 = node2.lat * (Math.PI/180); // degrees to radians
         var d_latitude = lat_2-lat_1; // Radian difference (latitudes)
         var d_longitude = (node2.long-node1.long) * (Math.PI/180); // Radian difference (longitudes)
-        var d = 2 * R * Math.asin(Math.sqrt(Math.sin(lat_1/2)*Math.sin(d_latitude/2)+Math.cos(lat_1)*Math.cos(lat_2)*Math.sin(d_longitude/2)*Math.sin(d_longitude/2)));
+        var d = 2 * R * Math.asin(Math.sqrt(Math.sin(d_latitude/2)*Math.sin(d_latitude/2)+Math.cos(lat_1)*Math.cos(lat_2)*Math.sin(d_longitude/2)*Math.sin(d_longitude/2)));
         // fixing it to 4 decimal values
-        d = d.toFixed(4) // took assumption to 4 decimal places
-        return parseInt(d);
+        // d = d.toFixed(4) // took assumption to 4 decimal places
+        // return parseInt(d);
+        return d;
+
     }
 }
 
