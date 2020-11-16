@@ -1,9 +1,10 @@
-require('dotenv').config()
+require('dotenv').config();
 const fetch = require('node-fetch');
 const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
 const search = require('../lib/AStar')
 const astar = search.AStar;
+let step = 3/3600;
 let borderX;
 let borderY;
 
@@ -25,22 +26,20 @@ async function processCoords(req, res) {
 }
 
 function testFunction(node) {
-    return node[0].getNeighbors()
-    
+    return node[0].getNeighbors();
 }
+
 async function getElevation(grid) {
     function Location(node) {
         this.latitude = node.lat;
         this.longitude = node.long;
     }
     const body = {
-        "locations":
-        []
+        "locations": []
     }
     function createBody(){
-        for(let i = 0; i<(grid.length/512); ++i){
-            let tempGrid = grid.slice(i*512, ((i+1)*512)); 
-            
+        for (let i = 0; i < (grid.length / 512); ++i){
+            let tempGrid = grid.slice(i * 512, ((i + 1) * 512)); 
             let bodyRow = [];
             for (node of tempGrid) {
                 bodyRow.push(new Location(node));
@@ -49,13 +48,10 @@ async function getElevation(grid) {
         }
     }
     createBody();
-    
     let i = 0;
-    
-    for(let locationSet of body.locations){
+    for (let locationSet of body.locations){
         async function retrieveElevations() {
             try {
-    
                 const response = await client
                     .elevation({
                     params: {
@@ -65,44 +61,38 @@ async function getElevation(grid) {
                     timeout: 1000,
                     })
                     return response
-                } catch (e) {
+                }
+                catch (e) {
                     console.log(e.response.data.error_message);
                 }
         }
-        
-        
-        
         let res = await retrieveElevations();
         let data = res.data.results;
-        
         addElevations(grid, data, i);
         ++i;
     }
-    
-    
 }
+
 function addElevations(graph, data, idx) {
     for (let i = 0; i < 512; ++i) {
-        if(Number((idx*512))+Number(i) < graph.length){
-            let index =Number(idx*512) + Number(i);
-            
+        if (Number((idx * 512))+Number(i) < graph.length){
+            let index = Number(idx * 512) + Number(i);
             graph[index].elevation = data[i].elevation;
         }
-        
     }
 }
-var coordToNeighbors = {}
+var coordToNeighbors = {};
 
 function gen2DGrid(startLat, startLong, endLat, endLong){
     function makeNode(lat, long) {
         let node = { 
             "lat": parseFloat((lat).toFixed(4)),
             "long": parseFloat((long).toFixed(4)),
-            "neighbors":[],
-            "elevation":null,
-            "dist":null,
-            "edist":null,
-            "parent":null,
+            "neighbors": [],
+            "elevation": null,
+            "dist": null,
+            "edist": null,
+            "parent": null,
             getNeighbors: function() {
                 return node.neighbors.map((nei) => [nei.lat, nei.long].join(","))
             }
@@ -113,62 +103,49 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
         grid.push(node);
     }
     let grid = [];
-    let step = 3/3600;
     let deltax = (endLat - startLat) / 2;
     let deltay = (endLong - startLong) / 2;
     if (deltax > deltay) {
-        deltax= deltax;
-        deltay = deltay + 2*((deltax-deltay)/2);
+        deltax = deltax;
+        deltay = deltay + (2 * ((deltax - deltay) / 2));
     }
     else {
-        deltax = deltax+2*((deltay-deltax)/2);
-        deltay= deltay;
+        deltax = deltax + (2 * ((deltay - deltax) / 2));
+        deltay = deltay;
     }
     borderX = Math.abs(deltax);
     borderY = Math.abs(deltay);
     
-    if(startLat <= endLat){
-        for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
+    if (startLat <= endLat) {
+        for (let lat = startLat - borderX; lat <= endLat + borderX; lat += step) {
             if (startLong <= endLong){ 
-                for(let long=startLong-borderY; long <= endLong+borderY; long += step){
+                for (let long = startLong - borderY; long <= endLong + borderY; long += step) {
                     makeNode(lat, long);
-                    
                 }
-
             }
-            else{
-                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
+            else {
+                for (let long = startLong + borderY; long >= endLong - borderY; long -= step) {
                     makeNode(lat, long);
                     
                 }
             }
-            
         }
 
     }
-    else{
-        for(let lat = startLat+borderX; lat >= endLat-borderX; lat -= step){
-            
+    else {
+        for (let lat = startLat + borderX; lat >= endLat - borderX; lat -= step) {
             if (startLong <= endLong){
-                for(let long = startLong-borderY; long <= endLong +borderY; long += step){
-
+                for (let long = startLong - borderY; long <= endLong + borderY; long += step) {
                     makeNode(lat, long);
-                    
-                }
-
-            }
-            else{
-                for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    
-                    makeNode(lat, long);
-                    
                 }
             }
-            
-
+            else {
+                for (let long = startLong+borderY; long >= endLong - borderY; long -= step) {
+                    makeNode(lat, long);   
+                }
+            }
         }
     }
-
     return grid;
 }
 
@@ -182,23 +159,23 @@ function getBorderY() {
 
 function getNeighbors(lat, long){
     let neighbors = [];
-    neighbors.push({"lat": parseFloat((lat+3/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat((lat-3/3600).toFixed(4)), "long": parseFloat(long.toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long+3/3600).toFixed(4))});
-    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long-3/3600).toFixed(4))});
+    neighbors.push({"lat": parseFloat((lat + (step)).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat((lat - (step)).toFixed(4)), "long": parseFloat(long.toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long + (step)).toFixed(4))});
+    neighbors.push({"lat": parseFloat(lat.toFixed(4)), "long": parseFloat((long - (step)).toFixed(4))});
     return neighbors;
-
 }
+
 function convertToDD(degrees, minutes, seconds){
-    return degrees + (minutes/60) + (seconds/360);
+    return degrees + (minutes / 60) + (seconds / 360);
 }
 
-function convertToDMS(degreeDecimal){
+function convertToDMS(degreeDecimal) {
     let degrees = Math.floor(degreeDecimal);
     let remain = degreeDecimal - degrees;
-    let minutes = Math.floor(remain*60);
-    remain = (remain*60) - minutes;
-    let seconds = Math.round(remain*60);
+    let minutes = Math.floor(remain * 60);
+    remain = (remain * 60) - minutes;
+    let seconds = Math.round(remain * 60);
     return {degrees, minutes, seconds};
 }
 
