@@ -16,14 +16,16 @@ let eLat = 42.38668987817437;
 let eLong = -72.53087997436525;
 let step = 3/3600;
 let grid = coords.gen2DGrid(sLat, sLong, eLat, eLong);
+let borderX = coords.getBorderX();
+let borderY = coords.getBorderY();
 
 describe('grid array population', function() {
     it('should contain at least 1 node', function() {
         assert.isAtLeast(grid.length, 1);
     });
     it('should have a certain amount of nodes based on lats, longs, step', function() {
-        assert.equal(parseInt(((Math.abs(sLat - eLat) + (2 * grid[0].borderX)) / (3/3600)) + 1) 
-                    * parseInt(((Math.abs(sLong - eLong) + (2 * grid[0].borderY)) / (3/3600)) + 1), grid.length);
+        assert.equal(parseInt(((Math.abs(sLat - eLat) + (2 * borderX)) / (3/3600)) + 1) 
+                    * parseInt(((Math.abs(sLong - eLong) + (2 * borderY)) / (3/3600)) + 1), grid.length);
     });
 });
 
@@ -53,19 +55,19 @@ describe('neighbors array population for each node', function() {
 
 describe('borderX initialization', function() {
     it('should not be null', function() {
-        assert.isNotNull(grid[0].borderX);
+        assert.isNotNull(borderX);
     });
     it('should not be negative', function() {
-        assert.isAtLeast(grid[0].borderX, 0);
+        assert.isAtLeast(borderX, 0);
     });
 });
 
 describe('borderY initialization for each node', function() {
     it('should not be null', function() {
-        assert.isNotNull(grid[0].borderY);
+        assert.isNotNull(borderY);
     });
     it('should not be negative', function() {
-        assert.isAtLeast(grid[0].borderY, 0);
+        assert.isAtLeast(borderY, 0);
     });
 });
 

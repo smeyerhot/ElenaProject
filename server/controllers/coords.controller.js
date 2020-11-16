@@ -4,6 +4,8 @@ const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
 const search = require('../lib/AStar')
 const astar = search.AStar;
+let borderX;
+let borderY;
 
 //processCoords needs to be async to get promise
 async function processCoords(req, res) {
@@ -92,13 +94,11 @@ function addElevations(graph, data, idx) {
 var coordToNeighbors = {}
 
 function gen2DGrid(startLat, startLong, endLat, endLong){
-    function makeNode(lat, long, borderX, borderY) {
+    function makeNode(lat, long) {
         let node = { 
             "lat": parseFloat((lat).toFixed(4)),
             "long": parseFloat((long).toFixed(4)),
             "neighbors":[],
-            "borderX": borderX,
-            "borderY": borderY,
             "elevation":null,
             "dist":null,
             "edist":null,
@@ -124,21 +124,21 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
         deltax = deltax+2*((deltay-deltax)/2);
         deltay= deltay;
     }
-    let borderX = Math.abs(deltax);
-    let borderY = Math.abs(deltay);
+    borderX = Math.abs(deltax);
+    borderY = Math.abs(deltay);
     
     if(startLat <= endLat){
         for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
             if (startLong <= endLong){ 
                 for(let long=startLong-borderY; long <= endLong+borderY; long += step){
-                    makeNode(lat, long, borderX, borderY);
+                    makeNode(lat, long);
                     
                 }
 
             }
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
-                    makeNode(lat, long, borderX, borderY);
+                    makeNode(lat, long);
                     
                 }
             }
@@ -152,7 +152,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             if (startLong <= endLong){
                 for(let long = startLong-borderY; long <= endLong +borderY; long += step){
 
-                    makeNode(lat, long, borderX, borderY);
+                    makeNode(lat, long);
                     
                 }
 
@@ -160,7 +160,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             else{
                 for(let long = startLong+borderY; long >= endLong-borderY; long -= step){
                     
-                    makeNode(lat, long, borderX, borderY);
+                    makeNode(lat, long);
                     
                 }
             }
@@ -172,6 +172,13 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
     return grid;
 }
 
+function getBorderX() {
+    return borderX;
+}
+
+function getBorderY() {
+    return borderY;
+}
 
 function getNeighbors(lat, long){
     let neighbors = [];
@@ -194,7 +201,10 @@ function convertToDMS(degreeDecimal){
     let seconds = Math.round(remain*60);
     return {degrees, minutes, seconds};
 }
+
 module.exports = {
     processCoords,
-    gen2DGrid
+    gen2DGrid,
+    getBorderX,
+    getBorderY
 }
