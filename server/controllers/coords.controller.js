@@ -17,9 +17,9 @@ async function processCoords(req, res) {
     let grid = gen2DGrid(startLat, startLong, endLat, endLong);
     //console.log(grid.length);
     //await getElevation(grid);
-    //console.log("Horray it worked!")
+    //console.log("Horray it worked!");
     // astar();
-    //console.log(testFunction(grid))
+    //console.log(testFunction(grid));
     res.status(200).send({
         "grid": grid
     })
@@ -60,7 +60,7 @@ async function getElevation(grid) {
                     },
                     timeout: 1000,
                     })
-                    return response
+                    return response;
                 }
                 catch (e) {
                     console.log(e.response.data.error_message);
@@ -75,7 +75,7 @@ async function getElevation(grid) {
 
 function addElevations(graph, data, idx) {
     for (let i = 0; i < 512; ++i) {
-        if (Number((idx * 512))+Number(i) < graph.length){
+        if (Number((idx * 512)) + Number(i) < graph.length){
             let index = Number(idx * 512) + Number(i);
             graph[index].elevation = data[i].elevation;
         }
@@ -94,10 +94,10 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             "edist": null,
             "parent": null,
             getNeighbors: function() {
-                return node.neighbors.map((nei) => [nei.lat, nei.long].join(","))
+                return node.neighbors.map((nei) => [nei.lat, nei.long].join(","));
             }
         }
-        let key = [node.lat.toString(),node.long.toString()].join(",")
+        let key = [node.lat.toString(),node.long.toString()].join(",");
         coordToNeighbors[key] = node;
         node.neighbors = getNeighbors(lat, long);
         grid.push(node);
