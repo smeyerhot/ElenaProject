@@ -27,7 +27,7 @@ async function processCoords(req, res) {
     graph = vprocessNodes(flattenedGrid, coordToNeighbors);
     let start_key = [info.startLat,info.startLong].join(",")
     let end_key = [info.endLat,info.endLong].join(",")
-    let data = algo(start_key,end_key,{},coordToNeighbors);
+    let data = algo(start_key,end_key,coordToNeighbors);
     res.status(200).send({
         "grid": data
     })

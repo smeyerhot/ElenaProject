@@ -28,9 +28,16 @@ app.use(helmet())
 // enable CORS - Cross Origin Resource Sharing
 // app.use(cors())
 app.set('view engine', 'ejs');
+var whitelist = ['http://localhost:3000', 'http://localhost:3001']
 
 var corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
   credentials: true };
 
 app.use(cors(corsOptions));
