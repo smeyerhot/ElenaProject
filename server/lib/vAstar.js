@@ -144,7 +144,7 @@ function processNodes(grid, dict)
 
 // not taking into account elevation currently
 // try changing it to more better approach
-function nodeValue(lat, long,neighbors,f,g,h,closed,visited,parent) {
+function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation) {
     this.lat = lat;
     this.long = long;
     this.neighbors = neighbors;
@@ -154,6 +154,7 @@ function nodeValue(lat, long,neighbors,f,g,h,closed,visited,parent) {
     this.visited = visited;
     this.closed = closed;
     this.parent =  parent;
+    this.elevation = elevation;
 }
 
 function pathTo(node) {
@@ -178,7 +179,7 @@ function aStarSearch(startkey, endkey, options,dict) {
       let end =  dict[endkey];
       // console.log('aStarSearch start '+JSON.stringify(start, null, 4));
       // console.log('aStarSearch  end '+JSON.stringify(start, null, 4));
-      var heuristic =  heuristics.manhattan;
+      var heuristic =  heuristics.haversine_distance;
       var closest = options.closest || false;
       var openHeap = getHeap(); 
       openHeap.push(start);
@@ -266,12 +267,15 @@ function aStarSearch(startkey, endkey, options,dict) {
       return pathTo(currentNode);
     }
 
+function euclidean(node1, node2) {
+
+}
 var heuristics = {    
     manhattan: function(node1 , node2){
         var d1 = Math.abs(node2.lat - node1.lat);
         var d2 = Math.abs(node2.long - node1.long);
         var d3 = Math.abs(node1.elevation - node2.elevation);
-        return d1 + d2;
+        return d1 + d2 + d3;
     },
     haversine_distance: function(node1,node2) {
         var R = 3958.8; // Radius of the Earth in miles
@@ -283,7 +287,9 @@ var heuristics = {
         // fixing it to 4 decimal values
         // d = d.toFixed(4) // took assumption to 4 decimal places
         // return parseInt(d);
-        return d;
+        //maximize elevation
+        var d3 = node2.elevation - node1.elevation
+        return d+d3;
 
     }
 }
