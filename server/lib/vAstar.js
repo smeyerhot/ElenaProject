@@ -1,5 +1,6 @@
 // added start and end node as part of the grid
 
+
 function BinaryHeap(scoreFunction) {
     this.content = [];
     this.scoreFunction = scoreFunction;
@@ -132,7 +133,7 @@ function processNodes(grid, dict)
     for(gridNode of grid)
     {
         // console.log('grid_node'+JSON.stringify(gridNode, null, 4));
-        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null);
+        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,Infinity);
         graph.push(node);
         let key = [node.lat.toString(),node.long.toString()].join(",")
         dict[key]=node;
@@ -144,7 +145,7 @@ function processNodes(grid, dict)
 
 // not taking into account elevation currently
 // try changing it to more better approach
-function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation) {
+function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation,edist) {
     this.lat = lat;
     this.long = long;
     this.neighbors = neighbors;
@@ -155,8 +156,8 @@ function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation) {
     this.closed = closed;
     this.parent =  parent;
     this.elevation = elevation;
+    this.edist=edist
 }
-
 function pathTo(node) {
     var curr = node;
     var path = [];
@@ -169,21 +170,26 @@ function pathTo(node) {
 
 function getHeap() {
     return new BinaryHeap(function(node) {
-      return node.f;
+      return node.edist;
     });
 }
 
 // graph and start and end node of the grid
-function aStarSearch(startkey, endkey, options,dict) {
+function aStarSearch(startkey, endkey, dict) {
+      const x = 2
+      // if node is in a lake then set it equal to closed
       let start = dict[startkey];
       let end =  dict[endkey];
+      // const SHORTEST = heuristics.manhattan(start, end)      
+      const SHORTEST = heuristics.haversine_distance(start, end) * x
+      
       // console.log('aStarSearch start '+JSON.stringify(start, null, 4));
       // console.log('aStarSearch  end '+JSON.stringify(start, null, 4));
       var heuristic =  heuristics.haversine_distance;
-      var closest = options.closest || false;
+      // var closest = options.closest || false;
       var openHeap = getHeap(); 
       openHeap.push(start);
-      var closestNode = start; // set the start node to be the closest if required
+      // var closestNode = start; // set the start node to be the closest if required
       start.h = heuristic(start, end); 
       // console.log('original heuristic:'+start.h);
 
@@ -227,6 +233,10 @@ function aStarSearch(startkey, endkey, options,dict) {
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
           // upto currnode+cost between curr and neighbor
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
+          var eScore = currentNode.edist + getEdist(currentNode, neighbor)
+          // if (gScore + euclidean(neighbor,end) > x)
+          if (gScore  > x)
+            continue
           var beenVisited = neighbor.visited;
           // console.log('beenVisited initial: '+beenVisited);
           if (!beenVisited || gScore < neighbor.g) {
@@ -238,14 +248,17 @@ function aStarSearch(startkey, endkey, options,dict) {
             // console.log('h score '+neighbor.h);
             neighbor.g = gScore;
             neighbor.f = neighbor.g + neighbor.h;
+            neighbor.edist = eScore;
+
+            
             // console.log('f score '+neighbor.f);
-            if (closest) {
-              // If the neighbour is closer than the current closestNode or if it's equally close but has
-              // a cheaper path than the current closest node then it becomes the closest node
-              if (neighbor.h < closestNode.h || (neighbor.h === closestNode.h && neighbor.g < closestNode.g)) {
-                closestNode = neighbor;
-              }
-            }
+            // if (closest) {
+            //   // If the neighbour is closer than the current closestNode or if it's equally close but has
+            //   // a cheaper path than the current closest node then it becomes the closest node
+            //   if (neighbor.h < closestNode.h || (neighbor.h === closestNode.h && neighbor.g < closestNode.g)) {
+            //     closestNode = neighbor;
+            //   }
+            // }
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
               // console.log('pushing node in heap');
@@ -259,16 +272,24 @@ function aStarSearch(startkey, endkey, options,dict) {
         }
       }
       //Specifies whether to return the path to the closest node if the target is unreachable.
-      if (closest) {
-        return pathTo(closestNode);
-      }
+      // if (closest) {
+      //   return pathTo(closestNode);
+      // }
   
     //   // No result was found - empty array signifies failure to find path.
       return pathTo(currentNode);
     }
-
+function getEdist(node1, node2) {
+  return node2.elevation - node1.elevation + 30000
+}
 function euclidean(node1, node2) {
-
+  let x0,x1,y0,y1
+  x0 = node1.long;
+  x1 = node2.long;
+  y0 = node1.lat;
+  y1 = node2.lat;
+  let euc = Math.sqrt((x0-x1)**2 + (y0-y1)**2)
+  return euc
 }
 var heuristics = {    
     manhattan: function(node1 , node2){
@@ -288,8 +309,8 @@ var heuristics = {
         // d = d.toFixed(4) // took assumption to 4 decimal places
         // return parseInt(d);
         //maximize elevation
-        var d3 = node2.elevation - node1.elevation
-        return d+d3;
+        
+        return d;
 
     }
 }
