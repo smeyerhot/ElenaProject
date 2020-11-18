@@ -1,10 +1,13 @@
-require('dotenv').config()
+require('dotenv').config();
 const fetch = require('node-fetch');
 const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
 const search = require('../lib/AStar')
 
 const astar = search.AStar;
+let step = 3/3600;
+let borderX;
+let borderY;
 
 const vsearch = require('../lib/vAstar'); 
 const { Console } = require('console');
@@ -21,7 +24,7 @@ async function processCoords(req, res) {
     let endLong = req.body.end.long;
     let [grid,info] = gen2DGrid(startLat, startLong, endLat, endLong)
     addNeighbors(grid)
-    console.log("Horray it worked!");
+    //console.log("Horray it worked!");
     let flattenedGrid = grid.flat();
     await getElevation(flattenedGrid)
     graph = vprocessNodes(flattenedGrid, coordToNeighbors);
@@ -54,19 +57,18 @@ function addNeighbors(grid) {
         }
     }
 }
+
 async function getElevation(grid) {
     function Location(node) {
         this.latitude = node.lat;
         this.longitude = node.long;
     }
     const body = {
-        "locations":
-        []
+        "locations": []
     }
     function createBody(){
-        for(let i = 0; i<(grid.length/512); ++i){
-            let tempGrid = grid.slice(i*512, ((i+1)*512)); 
-            
+        for (let i = 0; i < (grid.length / 512); ++i){
+            let tempGrid = grid.slice(i * 512, ((i + 1) * 512)); 
             let bodyRow = [];
             for (node of tempGrid) {
                 bodyRow.push(new Location(node));
@@ -76,7 +78,7 @@ async function getElevation(grid) {
     }
     createBody();
     let i = 0;
-    for(let locationSet of body.locations){
+    for (let locationSet of body.locations){
         async function retrieveElevations() {
             try {
                 const response = await client
@@ -87,8 +89,9 @@ async function getElevation(grid) {
                     },
                     timeout: 1000,
                     })
-                    return response
-                } catch (e) {
+                    return response;
+                }
+                catch (e) {
                     console.log(e.response.data.error_message);
                 }
         }
@@ -97,16 +100,14 @@ async function getElevation(grid) {
         addElevations(grid, data, i);
         ++i;
     }
-    
-    
 }
+
 function addElevations(graph, data, idx) {
     for (let i = 0; i < 512; ++i) {
-        if(Number((idx*512))+Number(i) < graph.length){
-            let index =Number(idx*512) + Number(i);
+        if (Number((idx * 512)) + Number(i) < graph.length){
+            let index = Number(idx * 512) + Number(i);
             graph[index].elevation = data[i].elevation;
         }
-        
     }
 }
 
@@ -124,6 +125,7 @@ function checkNode(currentBest, lat, long, startLat, startLong, endLat, endLong)
         currentBest.endLat = parseFloat((lat).toFixed(4));
     }
 }
+
 function makeNode(lat, long) {
     let node = { 
         "lat": parseFloat((lat).toFixed(4)),
@@ -138,8 +140,8 @@ function makeNode(lat, long) {
     coordToNeighbors[key] = node;
     return node
 }
+
 function gen2DGrid(startLat, startLong, endLat, endLong){
-    
     let currentBest = {
         "endVal":Infinity,
         "endLat":null,
@@ -202,6 +204,17 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
     return [betterGrid, currentBest];
 }
 
+function getBorderX() {
+    return borderX;
+}
+
+function getBorderY() {
+    return borderY;
+}
+
 module.exports = {
-    processCoords
+    processCoords,
+    gen2DGrid,
+    getBorderX,
+    getBorderY
 }
