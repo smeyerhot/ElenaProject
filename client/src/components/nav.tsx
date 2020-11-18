@@ -14,7 +14,7 @@ export default function Nav() {
         <div className="flex bg-orange-500 flex-row items-center top-0 h-20 w-screen p-3">
       <Link href="/">
         <a>
-          <h1 className="text-black text-3xl font-bold">Fidelity</h1>
+          <h1 className="text-black text-3xl font-bold">Elena</h1>
         </a>
       </Link>
       <div className="flex-grow" />
@@ -31,12 +31,12 @@ export default function Nav() {
         
         <button className="btn btn-orange btn-outlined" onClick={sign} > Sign Out </button>
 
-        <Link href="/chat">
+        {/* <Link href="/chat">
         <a>
           <button className="btn btn-orange btn-outlined">Chat</button>
         </a>
         </Link>
-        
+         */}
 
       </div>
     </header>

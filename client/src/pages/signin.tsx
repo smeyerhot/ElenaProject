@@ -29,7 +29,8 @@ const Signin: React.FunctionComponent = () => {
           auth.authenticate(data, () => {
             console.log("finished")
           })
-          router.push(`/profile/${ data.uuid }`)
+          // router.push(`/profile/${ data.uuid }`)
+          router.push('/')
         } catch {
           setErrorMessage(body)
         }
@@ -40,11 +41,11 @@ const Signin: React.FunctionComponent = () => {
   return (
     <div className="main flex flex-col items-center w-4/5 md:w-2/5 mx-auto">
       <Head>
-        <title>Login - Omiran</title>
+        <title>Login - Elena</title>
       </Head>
       <div className="flex-grow-2"/>
-      <h1 className="text-4xl font-bold leading-none">Omiran</h1>
-      <h3 className="text-sm mb-3">The Open Source Streaming Platform</h3>
+      <h1 className="text-4xl font-bold leading-none">Elena</h1>
+      <h3 className="text-sm mb-3">The UMass Elevation Tracker</h3>
       <div className="w-full">
         <label className="w-full pl-1" htmlFor="email-username-input">
           Username
