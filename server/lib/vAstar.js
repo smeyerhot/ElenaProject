@@ -133,7 +133,7 @@ function processNodes(grid, dict)
     for(gridNode of grid)
     {
         // console.log('grid_node'+JSON.stringify(gridNode, null, 4));
-        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,Infinity);
+        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,gridNode.elevation,Infinity);
         graph.push(node);
         let key = [node.lat.toString(),node.long.toString()].join(",")
         dict[key]=node;
@@ -176,22 +176,18 @@ function getHeap() {
 
 // graph and start and end node of the grid
 function aStarSearch(startkey, endkey, dict) {
-      const x = 2
+      const x = 3
       // if node is in a lake then set it equal to closed
       let start = dict[startkey];
+      
       let end =  dict[endkey];
+      start.edist = 0;
       // const SHORTEST = heuristics.manhattan(start, end)      
       const SHORTEST = heuristics.haversine_distance(start, end) * x
-      
-      // console.log('aStarSearch start '+JSON.stringify(start, null, 4));
-      // console.log('aStarSearch  end '+JSON.stringify(start, null, 4));
       var heuristic =  heuristics.haversine_distance;
-      // var closest = options.closest || false;
       var openHeap = getHeap(); 
       openHeap.push(start);
-      // var closestNode = start; // set the start node to be the closest if required
       start.h = heuristic(start, end); 
-      // console.log('original heuristic:'+start.h);
 
       while (openHeap.size() > 0) {
         // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
@@ -203,9 +199,6 @@ function aStarSearch(startkey, endkey, dict) {
         }     
         // Normal case -- move currentNode from open to closed, process each of its neighbors.
         currentNode.closed = true; 
-        // console.log('*****************************************');
-        // console.log('currentNode: '+JSON.stringify(currentNode, null, 4));
-        // console.log('*****************************************');
         // Find all neighbors for the current node.
         var neighbors = currentNode["neighbors"];
         // console.log('neighbors: '+neighbors.length); // obtain neighbors
@@ -213,52 +206,38 @@ function aStarSearch(startkey, endkey, dict) {
         //iterate through neighbors
         for (var i = 0; i < neighbors.length; i++) {
          // find neighbor node in graph corresponding to key
-        //  let key  = [neighbors[i].lat.toString(),neighbors[i].long.toString()].join(",");
           let key  = neighbors[i]
         //  var neighbor_node = dict[key]; // currently only lat long
-          // console.log('----------key----------'+key);
           if (!dict.hasOwnProperty(key)) {
             console.log(key)
             console.log("Node not in graph!")
             continue
           }
           var neighbor = dict[key];
-          // console.log('neighbor: '+JSON.stringify(neighbor, null, 4));
           if (neighbor.closed) {
             // Not a valid node to process, skip to next neighbor.
-            // console.log('closed: '+neighbor.idx);
             continue;
           }
-          // The g score is the shortest distance from start to current node.
+          // The escore is the shortest elevation distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
           // upto currnode+cost between curr and neighbor
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var eScore = currentNode.edist + getEdist(currentNode, neighbor)
-          // if (gScore + euclidean(neighbor,end) > x)
-          if (gScore  > x)
+          if (gScore > SHORTEST)
             continue
           var beenVisited = neighbor.visited;
-          // console.log('beenVisited initial: '+beenVisited);
           if (!beenVisited || gScore < neighbor.g) {
             // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
             neighbor.visited = true;
-            // console.log('beenVisited set now: '+ neighbor.visited);
             neighbor.parent = currentNode;
             neighbor.h = neighbor.h || heuristic(neighbor, end);
             // console.log('h score '+neighbor.h);
             neighbor.g = gScore;
             neighbor.f = neighbor.g + neighbor.h;
-            neighbor.edist = eScore;
 
-            
-            // console.log('f score '+neighbor.f);
-            // if (closest) {
-            //   // If the neighbour is closer than the current closestNode or if it's equally close but has
-            //   // a cheaper path than the current closest node then it becomes the closest node
-            //   if (neighbor.h < closestNode.h || (neighbor.h === closestNode.h && neighbor.g < closestNode.g)) {
-            //     closestNode = neighbor;
-            //   }
-            // }
+            //We scale elevation distances to avoid negatives so we must scale f values by 100 as well. 
+            //We essentially use a heuristic that tells us the average elevation gain along a path.
+            neighbor.edist = eScore/(neighbor.g*100);
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
               // console.log('pushing node in heap');
@@ -271,16 +250,16 @@ function aStarSearch(startkey, endkey, dict) {
           }
         }
       }
-      //Specifies whether to return the path to the closest node if the target is unreachable.
-      // if (closest) {
-      //   return pathTo(closestNode);
-      // }
   
-    //   // No result was found - empty array signifies failure to find path.
+      // No result was found - empty array signifies failure to find path.
       return pathTo(currentNode);
     }
 function getEdist(node1, node2) {
-  return node2.elevation - node1.elevation + 30000
+  
+  var edi = node2.elevation - node1.elevation + 100
+  if (edi <= 0)
+    console.log(edi)
+  return edi + 100
 }
 function euclidean(node1, node2) {
   let x0,x1,y0,y1
