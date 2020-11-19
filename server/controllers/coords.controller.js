@@ -221,6 +221,7 @@ function getStep() {
 module.exports = {
     processCoords,
     gen2DGrid,
+    addNeighbors,
     getBorderX,
     getBorderY,
     getStep
