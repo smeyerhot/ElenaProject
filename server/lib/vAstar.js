@@ -175,8 +175,10 @@ function getHeap() {
 }
 
 // graph and start and end node of the grid
-function aStarSearch(startkey, endkey, dict) {
-      const x = 3
+function aStarSearch(startkey, endkey, dict,min_max,x_val) {
+    // const x = 3;
+    const x = x_val/100;
+    console.log(x);
       // if node is in a lake then set it equal to closed
       let start = dict[startkey];
       
@@ -222,7 +224,7 @@ function aStarSearch(startkey, endkey, dict) {
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
           // upto currnode+cost between curr and neighbor
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
-          var eScore = currentNode.edist + getEdist(currentNode, neighbor)
+          var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
           if (gScore > SHORTEST)
             continue
           var beenVisited = neighbor.visited;
@@ -237,7 +239,7 @@ function aStarSearch(startkey, endkey, dict) {
 
             //We scale elevation distances to avoid negatives so we must scale f values by 100 as well. 
             //We essentially use a heuristic that tells us the average elevation gain along a path.
-            neighbor.edist = eScore/(neighbor.g*100);
+            neighbor.edist = eScore;
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
               // console.log('pushing node in heap');
@@ -254,13 +256,14 @@ function aStarSearch(startkey, endkey, dict) {
       // No result was found - empty array signifies failure to find path.
       return pathTo(currentNode);
     }
-function getEdist(node1, node2) {
+function getEdist(node1, node2, min_max) {
   
-  var edi = node2.elevation - node1.elevation + 100
-  if (edi <= 0)
-    console.log(edi)
-  return edi + 100
+  var edi = node2.elevation - node1.elevation 
+  if(min_max === 'Maximize') 
+    edi = -edi;
+  return edi
 }
+
 function euclidean(node1, node2) {
   let x0,x1,y0,y1
   x0 = node1.long;

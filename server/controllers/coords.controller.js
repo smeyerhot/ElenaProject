@@ -21,6 +21,8 @@ async function processCoords(req, res) {
     console.log(req.body);
     let startLat = req.body.start.lat;
     let startLong = req.body.start.long;
+    let pref = req.body.minMax;
+    let x_percent = JSON.parse(req.body.percent);
     let endLat = req.body.end.lat;
     let endLong = req.body.end.long;
     let [grid,info] = gen2DGrid(startLat, startLong, endLat, endLong)
@@ -31,14 +33,14 @@ async function processCoords(req, res) {
     graph = vprocessNodes(flattenedGrid, coordToNeighbors);
     let start_key = [info.startLat,info.startLong].join(",")
     let end_key = [info.endLat,info.endLong].join(",")
-    let data = algo(start_key,end_key,coordToNeighbors);
+    let data = algo(start_key,end_key,coordToNeighbors, pref, x_percent);
     res.status(200).send({
         "grid": data
     })
 }
 
 function addNeighbors(grid) {
-    const direcs = [[-1,0],[1,0],[0,-1],[0,1]]
+    const direcs = [[-1,0],[-1, -1],[1,0],[1,1],[0,-1],[1,-1],[0,1],[-1, 1]]
     m = grid.length
     n = grid[0].length
     for (let row = 0; row < m; row++){

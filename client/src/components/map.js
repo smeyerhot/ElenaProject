@@ -9,7 +9,6 @@ export default function MyMap (props) {
     const [position, setPosition] = useState([42.3868 , -72.5301]);
     const [path, setPath] = useState([]);
     const [markers, setMarkers] = useState([]);
-  
   //testing for if we want to implement users current location
   // useEffect(() =>{
   //  navigator.geolocation.getCurrentPosition((position) => {
@@ -79,15 +78,17 @@ export default function MyMap (props) {
                     //   this.setState({grid});
                     // }
                     // )})
-                    setPath(path => [...path, start])
+                    
+                    setPath(path => [...path, start]);
                     for (let data of body.grid){    
                       let pos = {lat: data.lat, lng: data.long};
                       // console.log(pos);
                       setPath(path => [...path, pos]);
                       // setGrid(grid => [...grid, pos]);
-
+                      
                     }
-                    setPath(path => [...path, end])
+                    
+                    setPath(path => [...path, end]);
                   })
             }
             getPath();
@@ -97,6 +98,7 @@ export default function MyMap (props) {
   
     function handleClick(e){
         if(nodeCount <2){
+
             setMarkers(markers => [...markers, e.latlng]);
             
             setNodeCount(nodeCount +1);
@@ -144,18 +146,9 @@ export default function MyMap (props) {
         {path.map((position, idx) => {
             if(idx < path.length-1){
                 let line = [[position.lat, position.lng], [path[idx+1].lat, path[idx+1].lng]];
-                return <Polyline key = {idx} color = "purple" positions = {line}></Polyline>
+                return <Polyline key = {idx} color = "red" positions = {line}></Polyline>
             }
         })}
-        {/* {grid.map((position, idx) => {
-            //console.log(position);
-          return <Marker key={`marker-${idx}`} position={position}>
-                  <Popup>
-                  <span>This is your node {idx} </span>
-                  </Popup>
-              
-            </Marker>
-        })} */}
 
       </Map>
     );
