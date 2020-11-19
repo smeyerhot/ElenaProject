@@ -65,7 +65,7 @@ describe('neighbors array population for each node', function() {
     });
 });
 
-describe('borderX initialization', function() {
+describe('borderX initialization for each node', function() {
     it('should not be null', function() {
         assert.isNotNull(borderX);
     });
