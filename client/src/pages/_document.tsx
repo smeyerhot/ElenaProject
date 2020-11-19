@@ -22,12 +22,10 @@ export default class MyDocument extends Document {
           
           
         <body >
-          <Nav />
-          <div className = "bodyPadding">
+
+          <Main />
+          <NextScript />
           
-            <Main />
-            <NextScript />
-          </div>
         </body>
       </html>
     )

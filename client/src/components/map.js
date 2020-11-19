@@ -1,15 +1,14 @@
 import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet"
-import {regIcon, startIcon, endIcon} from "./icons.js"
 import {useState, useEffect} from 'react'
 
-export default function MyMap () {
+export default function MyMap (props) {
+
     const [nodeCount, setNodeCount] = useState(0);
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [position, setPosition] = useState([42.3868 , -72.5301]);
     const [path, setPath] = useState([]);
     const [markers, setMarkers] = useState([]);
-    const [grid, setGrid] = useState([]);
   
   //testing for if we want to implement users current location
   // useEffect(() =>{
@@ -20,22 +19,37 @@ export default function MyMap () {
 
   //   
   // }
-    
+
 
     useEffect(()=> {
         if(nodeCount === 1){
             setStart(markers[0]);
+            props.onStateChange({
+              'start': markers[0],
+              'end': '',
+              'minMax':'', 
+              'percent': '', 
+              'done': false
+            })
         }
         if(nodeCount === 2){
             setEnd(markers[1]);
+            props.onStateChange({
+              'start': markers[0],
+              'end': markers[1],
+              'minMax':'', 
+              'percent': '', 
+              'done': false
+            })
         }
     }, [markers, nodeCount]);
 
     useEffect(() => {
-
-        if(grid.length === 0 && nodeCount === 2 && end){
-          
-            async function getGrid(){
+        if(props.state.done === true && path.length === 0){
+            let minMax = props.state.minMax;
+            let percent = props.state.percent;
+            async function getPath(){
+              alert("Processing, please wait!");
                 let response = await fetch('http://localhost:5000/api/coords', {
                     method: 'POST',
                     headers: {
@@ -51,7 +65,9 @@ export default function MyMap () {
                       "end": {
                           "lat": end.lat,
                           "long": end.lng
-                      }
+                      },
+                      minMax,
+                      percent
                     }),
                   }).then(async data =>  {
                     let body = await data.json();
@@ -74,10 +90,10 @@ export default function MyMap () {
                     setPath(path => [...path, end])
                   })
             }
-            getGrid();
+            getPath();
         }
         
-    }, [nodeCount, start, end]);
+    });
   
     function handleClick(e){
         if(nodeCount <2){
@@ -89,6 +105,13 @@ export default function MyMap () {
             setMarkers([]);
             setPath([]);
             setNodeCount(0);
+            props.onStateChange({
+              'start': '',
+              'end': '',
+              'minMax':'', 
+              'percent': '', 
+              'done': false
+            })
         }
         
            

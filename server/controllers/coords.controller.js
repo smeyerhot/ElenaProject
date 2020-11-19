@@ -18,6 +18,7 @@ var coordToNeighbors = {}
 
 //processCoords needs to be async to get promise
 async function processCoords(req, res) {
+    console.log(req.body);
     let startLat = req.body.start.lat;
     let startLong = req.body.start.long;
     let endLat = req.body.end.lat;
