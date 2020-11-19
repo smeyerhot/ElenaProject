@@ -51,13 +51,14 @@ describe('longitude initialization for each node', function() {
 });
 
 describe('neighbors array population for each node', function() {
-    it('should contain 2-4 nodes', function() {
+    it('should contain 3-6 nodes', function() {
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 let neighbs = true;
-                if (grid[i][j].neighbors.length < 2 || grid[i][j].neighbors.length > 4) {
-                    assert.isTrue(neighbs);
+                if (grid[i][j].neighbors.length < 3 || grid[i][j].neighbors.length > 6) {
+                    neighbs = false;
                 }
+                assert.isTrue(neighbs);
             }
         }
     });
@@ -87,7 +88,7 @@ describe('proper distance from neighbors', function() {
             for (let j = 0; j < grid[i].length; j++) {
                 for (let k = 0; k < grid[i][j].neighbors.length; k++) {
                     let stepDist = true;
-                    if (!((Math.abs((Math.abs((grid[i][j].lat).toFixed(4) - (grid[i][j].neighbors[k].lat).toFixed(4)) - step.toFixed(4)) <= 0.0001)) 
+                    if ((Math.abs((Math.abs((grid[i][j].lat).toFixed(4) - (grid[i][j].neighbors[k].lat).toFixed(4)) - step.toFixed(4)) <= 0.0001) 
                         || (Math.abs((Math.abs((grid[i][j].long).toFixed(4) - (grid[i][j].neighbors[j].long).toFixed(4)) - step.toFixed(4)) <= 0.0001)))) {
                             stepDist = false;
                     }
@@ -96,7 +97,7 @@ describe('proper distance from neighbors', function() {
             }
         }
     });
-    it('should not have neighbor with equal distance lat and long (diagonal)', function() {
+    /*it('should not have neighbor with equal distance lat and long (diagonal)', function() {
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 for (let k = 0; k < grid[i][j].neighbors.length; k++) {
@@ -105,7 +106,7 @@ describe('proper distance from neighbors', function() {
                 }
             }
         }
-    });
+    });*/
 });
 
 /*describe('elevation initialization for each node', function() {
