@@ -170,7 +170,7 @@ function pathTo(node) {
 
 function getHeap() {
     return new BinaryHeap(function(node) {
-      return node.edist;
+      return node.f + node.edist;
     });
 }
 
@@ -258,7 +258,7 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
     }
 function getEdist(node1, node2, min_max) {
   
-  var edi = node2.elevation - node1.elevation 
+  let edi = node2.elevation - node1.elevation
   if(min_max === 'Maximize') 
     edi = -edi;
   return edi
