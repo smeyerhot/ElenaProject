@@ -56,7 +56,7 @@ function addNeighbors(grid) {
                     let neiLong =  grid[newRow][newCol].long
                     node.neighbors.push([neiLat,neiLong].join(","))
                 }
-           }
+            }
         }
     }
 }
@@ -153,8 +153,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
         "startLat":null,
         "startLong":null
     }
-
-    let step = 3/3600;
+    
     let deltax = (endLat - startLat) / 2;
     let deltay = (endLong - startLong) / 2;
     if (deltax > deltay) {
@@ -166,8 +165,8 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
         deltay= deltay;
     }
 
-    let borderX = Math.abs(deltax);
-    let borderY = Math.abs(deltay);
+    borderX = Math.abs(deltax);
+    borderY = Math.abs(deltay);
     let betterGrid = [];    
     if(startLat <= endLat){
         for(let lat = startLat-borderX; lat <= endLat+borderX; lat += step){
@@ -203,7 +202,7 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
             }
             betterGrid.push(row)
         }
-    }    
+    }
     return [betterGrid, currentBest];
 }
 
@@ -215,9 +214,14 @@ function getBorderY() {
     return borderY;
 }
 
+function getStep() {
+    return step;
+}
+
 module.exports = {
     processCoords,
     gen2DGrid,
     getBorderX,
-    getBorderY
+    getBorderY,
+    getStep
 }
