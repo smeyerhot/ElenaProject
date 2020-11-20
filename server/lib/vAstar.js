@@ -41,7 +41,7 @@ function BellmanFord(startkey, endkey,dict,min_max,x_val) {
   for (key in dict){
     for (edge of g.edges){
       var curr = new Date().getTime();
-      if ((curr - begin) > 5000) {
+      if ((curr - begin) > 10000) {
         return [null,null,null]
       }
       let [u, v, w] = [...edge]

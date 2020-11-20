@@ -89,7 +89,7 @@ export default function MyMap (props) {
     });
 
     function setPath(body) {
-      if (body.grid1!=null) {
+      if (body.grid1 != null) {
         setPath1(path1 => [...path1, start]);
         
           for (let data of body.grid1){    
