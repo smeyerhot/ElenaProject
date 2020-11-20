@@ -7,8 +7,10 @@ export default function MyMap (props) {
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [position, setPosition] = useState([42.3868 , -72.5301]);
-    const [path, setPath] = useState([]);
+    const [path1, setPath1] = useState([]);
+    const [path2, setPath2] = useState([]);
     const [markers, setMarkers] = useState([]);
+
   //testing for if we want to implement users current location
   // useEffect(() =>{
   //  navigator.geolocation.getCurrentPosition((position) => {
@@ -44,7 +46,7 @@ export default function MyMap (props) {
     }, [markers, nodeCount]);
 
     useEffect(() => {
-        if(props.state.done === true && path.length === 0){
+        if(props.state.done === true && path1.length === 0 && path2.length==0){
             let minMax = props.state.minMax;
             let percent = props.state.percent;
             async function getPath(){
@@ -67,35 +69,54 @@ export default function MyMap (props) {
                       },
                       minMax,
                       percent
-                    }),
-                  }).then(async data =>  {
-                    let body = await data.json();
-                    // body.then(points => {
-                    //   let {grid} = this.state.grid;
-              
-                    //   console.log(points);
-                    //   grid = points;
-                    //   this.setState({grid});
-                    // }
-                    // )})
+                    })
+                })
+                  // }).then(async data =>  {
+                  //   let body = await data.json();
                     
-                    setPath(path => [...path, start]);
-                    for (let data of body.grid){    
-                      let pos = {lat: data.lat, lng: data.long};
-                      // console.log(pos);
-                      setPath(path => [...path, pos]);
-                      // setGrid(grid => [...grid, pos]);
-                      
-                    }
-                    
-                    setPath(path => [...path, end]);
-                  })
+          
+                let data = await response.json()
+                console.log(data)
+                setPath(data)
+                
+
             }
             getPath();
+
+
         }
         
     });
-  
+
+    function setPath(body) {
+      if (body.grid1!=null) {
+        setPath1(path1 => [...path1, start]);
+        
+          for (let data of body.grid1){    
+            let pos = {lat: data.lat, lng: data.long};
+            // console.log(pos);
+            setPath1(path1 => [...path1, pos]);
+            // setGrid(grid => [...grid, pos]);
+            
+          }     
+          setPath1(path1 => [...path1, end]);  
+      }
+      if (body.grid2 != null) {     
+      setPath2(path2 => [...path2, start]);
+        for (let data of body.grid2){    
+              let pos = {lat: data.lat, lng: data.long};
+              // console.log(pos);
+              setPath2(path2 => [...path2, pos]);
+              // setGrid(grid => [...grid, pos]);
+              
+            }
+            
+        setPath2(path2 => [...path2, end]);
+
+          }
+          
+        }
+    
     function handleClick(e){
         if(nodeCount <2){
 
@@ -105,7 +126,8 @@ export default function MyMap (props) {
         }
         else{
             setMarkers([]);
-            setPath([]);
+            setPath1([]);
+            setPath2([]);
             setNodeCount(0);
             props.onStateChange({
               'start': '',
@@ -119,7 +141,8 @@ export default function MyMap (props) {
            
     }
 
-    
+    console.log(path1)
+    console.log(path2)
     return (
         
       <Map 
@@ -143,15 +166,19 @@ export default function MyMap (props) {
               
             </Marker>
         })}
-        {path.map((position, idx) => {
-            if(idx < path.length-1){
-                let line = [[position.lat, position.lng], [path[idx+1].lat, path[idx+1].lng]];
-                return <Polyline key = {idx} color = "red" positions = {line}></Polyline>
-            }
-        })}
+        {makePath(path1,"purple")}
+        {makePath(path2,"red")}
 
       </Map>
     );
     }
 
     
+function makePath(path,color) {
+  return path.map((position, idx) => {
+              if(idx < path.length-1){
+                  let line = [[position.lat, position.lng], [path[idx+1].lat, path[idx+1].lng]];
+                  return <Polyline key = {idx} color = {color} positions = {line}></Polyline>
+              }
+          })
+        } 
