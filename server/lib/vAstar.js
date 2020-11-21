@@ -41,7 +41,7 @@ function BellmanFord(startkey, endkey,dict,min_max,x_val) {
   for (key in dict){
     for (edge of g.edges){
       var curr = new Date().getTime();
-      if ((curr - begin) > 10000) {
+      if ((curr - begin) > 2000) {
         return [null,null,null]
       }
       let [u, v, w] = [...edge]
@@ -56,7 +56,6 @@ function BellmanFord(startkey, endkey,dict,min_max,x_val) {
       }
       console.log(edge)
     }
-    
   }
   //There are never any negative weight cycles because starting at ending at the same location is a weight 0 cycle.
   return [pathTo(end), end.dist, heuristics.haversine_distance(start,end)* x]
@@ -112,11 +111,11 @@ function pathTo(node) {
     return path;
 }
 
-// function getHeap() {
-//     return new BinaryHeap(function(node) {
-//       return node.f 
-//     });
-// }
+function getHeap() {
+    return new BinaryHeap(function(node) {
+      return node.f;
+    });
+}
 function getElevationHeap() {
     return new BinaryHeap(function(node) {
       return node.f + node.edist;
@@ -131,32 +130,66 @@ function dictMutator(dict, offset) {
   }
 }
 
-//Incorrect! start-1-0-0
-          // \     \fin
-          //  1-1  /
-
-          // start-6-5-5
-          // \     \fin
-          //  6-6  / Longer paths will become worse off unfairly so we cannot scale
 
 // graph and start and end node of the grid
-function aStarSearch(startkey, endkey, dict,min_max,x_val) {
-    // const x = 3;
-    const x = x_val/100;
-    console.log(x);
-      // if node is in a lake then set it equal to closed
+function eStar(startkey, endkey, dict,min_max,x_val) {
+
+      const x = x_val/100;
+
       let start = dict[startkey];
       let end =  dict[endkey];
-      start.edist = 0;
-      // const SHORTEST = heuristics.manhattan(start, end)      
-      const SHORTEST = heuristics.haversine_distance(start, end) * x
+      start.edist = 0;     
+      var heuristic =  heuristics.haversine_distance;
+      var openHeap = getHeap(); 
+      openHeap.push(start);
+      start.h = heuristic(start, end); 
+
+      while (openHeap.size() > 0) {
+        var currentNode = openHeap.pop();
+        if (currentNode == end) {
+            return [pathTo(end),end.edist];
+        }     
+        currentNode.closed = true; 
+        var neighbors = currentNode["neighbors"];
+        for (var i = 0; i < neighbors.length; i++) {
+          let key  = neighbors[i]
+          var neighbor = dict[key];
+          if (neighbor.closed) {
+            continue;
+          }
+          let best = heuristic(start,neighbor) * x
+          var gScore = currentNode.g + heuristic(currentNode,neighbor);
+          var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
+          if (gScore > best)
+            continue
+          var beenVisited = neighbor.visited;
+          if (!beenVisited || gScore < neighbor.g) {
+            neighbor.visited = true;
+            neighbor.parent = currentNode;
+            neighbor.h = getEdist(neighbor, end)
+            neighbor.g = gScore;
+            neighbor.edist = eScore;
+            neighbor.f = eScore + getEdist(neighbor, end)
+            if (!beenVisited) {
+              openHeap.push(neighbor);
+            } else {
+              openHeap.rescoreElement(neighbor);
+            }
+          }
+        }
+      }
+      return [pathTo(currentNode), end.edist];
+    }
+
+function aStarSearch(startkey, endkey, dict,min_max,x_val) {
+
+      const x = x_val/100;
+
+      let start = dict[startkey];
+      let end =  dict[endkey];
+      start.edist = 0;     
       var heuristic =  heuristics.haversine_distance;
       var openHeap = getElevationHeap(); 
-      // var elevationHeap = getElevationHeap();
-      // Object.values(dict).map((ele) => elevationHeap.push(ele))
-      // var smallestElevation = elevationHeap.pop().elevation;
-      // console.log(smallestElevation)
-      // dictMutator(dict, Math.abs(smallestElevation))
       openHeap.push(start);
       start.h = heuristic(start, end); 
 
@@ -188,10 +221,11 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
           }
           // The escore is the shortest elevation distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-          // up to currnode+cost between curr and neighbor
+          // up to currnode+cost between curr and neighbor 
+          const best = heuristics.haversine_distance(start, neighbor) * x
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
-          if (gScore > SHORTEST)
+          if (gScore > best)
             continue
           var beenVisited = neighbor.visited;
           if (!beenVisited || gScore < neighbor.g) {
@@ -201,9 +235,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
             neighbor.h = neighbor.h || heuristic(neighbor, end);
             neighbor.g = gScore;
             neighbor.f = neighbor.g + neighbor.h;
-
-            //We scale elevation distances to avoid negatives so we must scale f values by 100 as well. 
-            //We essentially use a heuristic that tells us the average elevation gain along a path.
             neighbor.edist = eScore;
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
@@ -213,7 +244,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
               // Already seen the node, but since it has been rescored we need to reorder it in the heap
               openHeap.rescoreElement(neighbor);
             }
-            // console.log('updated node'+JSON.stringify(neighbor, null, 4));
           }
         }
       }
@@ -265,5 +295,6 @@ var heuristics = {
 module.exports = {
     processNodes,
     aStarSearch,
-    BellmanFord
+    BellmanFord,
+    eStar
 }

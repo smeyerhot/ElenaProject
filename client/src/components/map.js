@@ -9,17 +9,8 @@ export default function MyMap (props) {
     const [position, setPosition] = useState([42.3868 , -72.5301]);
     const [path1, setPath1] = useState([]);
     const [path2, setPath2] = useState([]);
+    const [path3, setPath3] = useState([]);
     const [markers, setMarkers] = useState([]);
-
-  //testing for if we want to implement users current location
-  // useEffect(() =>{
-  //  navigator.geolocation.getCurrentPosition((position) => {
-  //     setPosition(position.coords);
-  //   });
-  //})
-
-  //   
-  // }
 
 
     useEffect(()=> {
@@ -71,10 +62,7 @@ export default function MyMap (props) {
                       percent
                     })
                 })
-                  // }).then(async data =>  {
-                  //   let body = await data.json();
-                    
-          
+              
                 let data = await response.json()
                 console.log(data)
                 setPath(data)
@@ -105,13 +93,20 @@ export default function MyMap (props) {
       setPath2(path2 => [...path2, start]);
         for (let data of body.grid2){    
               let pos = {lat: data.lat, lng: data.long};
-              // console.log(pos);
               setPath2(path2 => [...path2, pos]);
-              // setGrid(grid => [...grid, pos]);
-              
             }
             
         setPath2(path2 => [...path2, end]);
+
+          }
+      if (body.grid3 != null) {     
+      setPath3(path3=> [...path3, start]);
+        for (let data of body.grid3){    
+              let pos = {lat: data.lat, lng: data.long};
+              setPath3(path3 => [...path3, pos]);
+            }
+            
+        setPath3(path3 => [...path3, end]);
 
           }
           
@@ -128,6 +123,7 @@ export default function MyMap (props) {
             setMarkers([]);
             setPath1([]);
             setPath2([]);
+            setPath3([]);
             setNodeCount(0);
             props.onStateChange({
               'start': '',
@@ -168,6 +164,7 @@ export default function MyMap (props) {
         })}
         {makePath(path1,"purple")}
         {makePath(path2,"red")}
+        {makePath(path3,"blue")}
 
       </Map>
     );
