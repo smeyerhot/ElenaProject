@@ -2,23 +2,23 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const {Client} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
-const search = require('../lib/AStar')
 
-const astar = search.AStar;
+
+
 let step = 3/3600;
 let borderX;
 let borderY;
 
 const vsearch = require('../lib/vAstar'); 
-const { Console } = require('console');
+const estar = vsearch.eStar;
 const vprocessNodes = vsearch.processNodes; 
-const algo = vsearch.aStarSearch;
+const hybrid = vsearch.aStarSearch;
+const bellmanford = vsearch.BellmanFord;
 
 var coordToNeighbors = {}
 
 //processCoords needs to be async to get promise
 async function processCoords(req, res) {
-    console.log(req.body);
     let startLat = req.body.start.lat;
     let startLong = req.body.start.long;
     let pref = req.body.minMax;
@@ -27,18 +27,38 @@ async function processCoords(req, res) {
     let endLong = req.body.end.long;
     let [grid,info] = gen2DGrid(startLat, startLong, endLat, endLong)
     addNeighbors(grid)
-    //console.log("Horray it worked!");
     let flattenedGrid = grid.flat();
     await getElevation(flattenedGrid)
-    graph = vprocessNodes(flattenedGrid, coordToNeighbors);
+    vprocessNodes(flattenedGrid, coordToNeighbors);
+    
     let start_key = [info.startLat,info.startLong].join(",")
     let end_key = [info.endLat,info.endLong].join(",")
-    let data = algo(start_key,end_key,coordToNeighbors, pref, x_percent);
-    res.status(200).send({
-        "grid": data
-    })
-}
+    let payload = {
+        "grid1":null,
+        "grid2":null,
+        "grid3":null,
+        "toolong":false
+    }
+    
+    let [p1, _, minDist] = [...bellmanford(start_key,end_key,coordToNeighbors, pref, x_percent)];
 
+    if (p1!=null){
+        payload["grid3"] = p1
+    } 
+    let [path, dist] = [...hybrid(start_key,end_key,coordToNeighbors, pref, x_percent)];
+    
+    if (path!=null){
+        payload["grid1"] = path
+    } 
+    vprocessNodes(flattenedGrid, coordToNeighbors);
+    let [p,hybridDist] = [...estar(start_key,end_key,coordToNeighbors, pref, x_percent)]
+    payload["grid2"] = p
+    // if (dist > minDist){
+    //     payload["toolong"] = true
+    // }
+    res.status(200).send(payload)
+   
+}
 function addNeighbors(grid) {
     const direcs = [[-1,0],[-1, -1],[1,0],[1,1],[0,-1],[1,-1],[0,1],[-1, 1]]
     m = grid.length

@@ -1,129 +1,73 @@
-// added start and end node as part of the grid
 
-
-function BinaryHeap(scoreFunction) {
-    this.content = [];
-    this.scoreFunction = scoreFunction;
-  }
-  BinaryHeap.prototype = {
-    push: function(element) {
-      // Add the new element to the end of the array.
-      this.content.push(element);
-  
-      // Allow it to sink down.
-      this.sinkDown(this.content.length - 1);
-    },
-    pop: function() {
-      // Store the first element so we can return it later.
-      var result = this.content[0];
-      // Get the element at the end of the array.
-      var end = this.content.pop();
-      // If there are any elements left, put the end element at the
-      // start, and let it bubble up.
-      if (this.content.length > 0) {
-        this.content[0] = end;
-        this.bubbleUp(0);
-      }
-      return result;
-    },
-    remove: function(node) {
-      var i = this.content.indexOf(node);
-      // When it is found, the process seen in 'pop' is repeated
-      // to fill up the hole.
-      var end = this.content.pop();
-  
-      if (i !== this.content.length - 1) {
-        this.content[i] = end;
-  
-        if (this.scoreFunction(end) < this.scoreFunction(node)) {
-          this.sinkDown(i);
-        } else {
-          this.bubbleUp(i);
-        }
-      }
-    },
-    size: function() {
-      return this.content.length;
-    },
-    rescoreElement: function(node) {
-      this.sinkDown(this.content.indexOf(node));
-    },
-  
-    sinkDown: function(n) {
-      // Fetch the element that has to be sunk.
-      var element = this.content[n];
-  
-      // When at 0, an element can not sink any further.
-      while (n > 0) {
-  
-        // Compute the parent element's index, and fetch it.
-        var parentN = ((n + 1) >> 1) - 1;
-        var parent = this.content[parentN];
-        // Swap the elements if the parent is greater.
-        if (this.scoreFunction(element) < this.scoreFunction(parent)) {
-          this.content[parentN] = element;
-          this.content[n] = parent;
-          // Update 'n' to continue at the new position.
-          n = parentN;
-        }
-        // Found a parent that is less, no need to sink any further.
-        else {
-          break;
-        }
-      }
-    },
-    bubbleUp: function(n) {
-      // Look up the target element and its score.
-      var length = this.content.length;
-      var element = this.content[n];
-      var elemScore = this.scoreFunction(element);
-  
-      while (true) {
-        // Compute the indices of the child elements.
-        var child2N = (n + 1) << 1;
-        var child1N = child2N - 1;
-        // This is used to store the new position of the element, if any.
-        var swap = null;
-        var child1Score;
-        // If the first child exists (is inside the array)...
-        if (child1N < length) {
-          // Look it up and compute its score.
-          var child1 = this.content[child1N];
-          child1Score = this.scoreFunction(child1);
-  
-          // If the score is less than our element's, we need to swap.
-          if (child1Score < elemScore) {
-            swap = child1N;
-          }
-        }
-  
-        // Do the same checks for the other child.
-        if (child2N < length) {
-          var child2 = this.content[child2N];
-          var child2Score = this.scoreFunction(child2);
-          if (child2Score < (swap === null ? elemScore : child1Score)) {
-            swap = child2N;
-          }
-        }
-  
-        // If the element needs to be moved, swap it, and continue.
-        if (swap !== null) {
-          this.content[n] = this.content[swap];
-          this.content[swap] = element;
-          n = swap;
-        }
-        // Otherwise, we are done.
-        else {
-          break;
-        }
-      }
-    }
-  }
+const heap = require('./heap'); 
+const BinaryHeap = heap.BinaryHeap;
 /**
  * 
  * @param {*} grid - grid2DGen
  * returns the graph from the grid
  */
+
+class Graph {
+  constructor(dict,min_max) {
+    this.dict = dict
+    this.opt = min_max
+    this.edges = []
+    
+    
+  }
+  addEdge(u) {
+    let neighbors = this.dict[u].neighbors;
+    for (let i=0; i < neighbors.length;i++) {
+      let v = neighbors[i]
+      let nei  = this.dict[v]
+      let w = getEdist(this.dict[u], nei, this.opt)
+      
+      this.edges.push([u,v,w])
+    }
+  }
+}
+function BellmanFord(startkey, endkey,dict,min_max,x_val) {
+  var begin = new Date().getTime();
+  const x = x_val/100;
+  
+  let g = new Graph(dict,min_max)
+  for (node of Object.keys(dict))
+    g.addEdge(node)
+  let start = dict[startkey];
+  let end =  dict[endkey];
+  start.edist = 0;
+  start.dist = 0;
+  let n = Object.keys(dict).length
+  for (key in dict){
+    for (edge of g.edges){
+      var curr = new Date().getTime();
+      if ((curr - begin) > 2000) {
+        return [null,null,null]
+      }
+      let [u, v, w] = [...edge]
+      node = dict[u]
+      nei = dict[v]
+      let value = node.edist + w
+      
+      if (node.edist != Infinity && value < nei.edist) {
+        nei.edist = value
+        nei.dist = heuristics.haversine_distance(nei,node) + node.dist
+        nei.parent = node
+      }
+      console.log(edge)
+    }
+  }
+  //There are never any negative weight cycles because starting at ending at the same location is a weight 0 cycle.
+  return [pathTo(end), end.dist, heuristics.haversine_distance(start,end)* x]
+
+}
+
+
+function nodeToCoords(node){
+  let key = [node.lat.toString(),node.long.toString()].join(",")
+  return key
+}
+
 function processNodes(grid, dict)
 {
     console.log('Processing nodes');
@@ -132,12 +76,10 @@ function processNodes(grid, dict)
     console.log('processNodes grid length'+grid.length);
     for(gridNode of grid)
     {
-        // console.log('grid_node'+JSON.stringify(gridNode, null, 4));
-        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,gridNode.elevation,Infinity);
+        var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,gridNode.elevation,Infinity,Infinity);
         graph.push(node);
         let key = [node.lat.toString(),node.long.toString()].join(",")
         dict[key]=node;
-        // console.log('dict: '+key);
     }
     return graph;
 
@@ -145,7 +87,7 @@ function processNodes(grid, dict)
 
 // not taking into account elevation currently
 // try changing it to more better approach
-function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation,edist) {
+function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation,edist,dist) {
     this.lat = lat;
     this.long = long;
     this.neighbors = neighbors;
@@ -157,6 +99,7 @@ function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation,edis
     this.parent =  parent;
     this.elevation = elevation;
     this.edist=edist
+    this.dist=dist
 }
 function pathTo(node) {
     var curr = node;
@@ -170,24 +113,83 @@ function pathTo(node) {
 
 function getHeap() {
     return new BinaryHeap(function(node) {
+      return node.f;
+    });
+}
+function getElevationHeap() {
+    return new BinaryHeap(function(node) {
       return node.f + node.edist;
     });
 }
+function dictMutator(dict, offset) {
+  console.log(offset)
+  for (idx in dict) {
+    console.log(dict[idx].elevation )
+    dict[idx].elevation = dict[idx].elevation - offset;
+    console.log(dict[idx].elevation)
+  }
+}
+
 
 // graph and start and end node of the grid
-function aStarSearch(startkey, endkey, dict,min_max,x_val) {
-    // const x = 3;
-    const x = x_val/100;
-    console.log(x);
-      // if node is in a lake then set it equal to closed
+function eStar(startkey, endkey, dict,min_max,x_val) {
+
+      const x = x_val/100;
+
       let start = dict[startkey];
-      
       let end =  dict[endkey];
-      start.edist = 0;
-      // const SHORTEST = heuristics.manhattan(start, end)      
-      const SHORTEST = heuristics.haversine_distance(start, end) * x
+      start.edist = 0;     
       var heuristic =  heuristics.haversine_distance;
       var openHeap = getHeap(); 
+      openHeap.push(start);
+      start.h = heuristic(start, end); 
+
+      while (openHeap.size() > 0) {
+        var currentNode = openHeap.pop();
+        if (currentNode == end) {
+            return [pathTo(end),end.edist];
+        }     
+        currentNode.closed = true; 
+        var neighbors = currentNode["neighbors"];
+        for (var i = 0; i < neighbors.length; i++) {
+          let key  = neighbors[i]
+          var neighbor = dict[key];
+          if (neighbor.closed) {
+            continue;
+          }
+          let best = heuristic(start,neighbor) * x
+          var gScore = currentNode.g + heuristic(currentNode,neighbor);
+          var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
+          if (gScore > best)
+            continue
+          var beenVisited = neighbor.visited;
+          if (!beenVisited || gScore < neighbor.g) {
+            neighbor.visited = true;
+            neighbor.parent = currentNode;
+            neighbor.h = getEdist(neighbor, end)
+            neighbor.g = gScore;
+            neighbor.edist = eScore;
+            neighbor.f = eScore + getEdist(neighbor, end)
+            if (!beenVisited) {
+              openHeap.push(neighbor);
+            } else {
+              openHeap.rescoreElement(neighbor);
+            }
+          }
+        }
+      }
+      return [pathTo(currentNode), end.edist];
+    }
+
+function aStarSearch(startkey, endkey, dict,min_max,x_val) {
+
+      const x = x_val/100;
+
+      let start = dict[startkey];
+      let end =  dict[endkey];
+      start.edist = 0;     
+      var heuristic =  heuristics.haversine_distance;
+      var openHeap = getElevationHeap(); 
       openHeap.push(start);
       start.h = heuristic(start, end); 
 
@@ -196,15 +198,12 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
         var currentNode = openHeap.pop();
         // End case -- result has been found, return the traced path.
         if (currentNode == end) {
-            // console.log('path found:'+pathTo(currentNode))
-            return pathTo(end);
+            return [pathTo(end),end.edist];
         }     
         // Normal case -- move currentNode from open to closed, process each of its neighbors.
         currentNode.closed = true; 
         // Find all neighbors for the current node.
         var neighbors = currentNode["neighbors"];
-        // console.log('neighbors: '+neighbors.length); // obtain neighbors
-        // console.log('neighbors: '+neighbors[0].lat); // obtain neighbors
         //iterate through neighbors
         for (var i = 0; i < neighbors.length; i++) {
          // find neighbor node in graph corresponding to key
@@ -222,10 +221,11 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
           }
           // The escore is the shortest elevation distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-          // upto currnode+cost between curr and neighbor
+          // up to currnode+cost between curr and neighbor 
+          const best = heuristics.haversine_distance(start, neighbor) * x
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
-          if (gScore > SHORTEST)
+          if (gScore > best)
             continue
           var beenVisited = neighbor.visited;
           if (!beenVisited || gScore < neighbor.g) {
@@ -233,12 +233,8 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
             neighbor.visited = true;
             neighbor.parent = currentNode;
             neighbor.h = neighbor.h || heuristic(neighbor, end);
-            // console.log('h score '+neighbor.h);
             neighbor.g = gScore;
             neighbor.f = neighbor.g + neighbor.h;
-
-            //We scale elevation distances to avoid negatives so we must scale f values by 100 as well. 
-            //We essentially use a heuristic that tells us the average elevation gain along a path.
             neighbor.edist = eScore;
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
@@ -248,13 +244,10 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
               // Already seen the node, but since it has been rescored we need to reorder it in the heap
               openHeap.rescoreElement(neighbor);
             }
-            // console.log('updated node'+JSON.stringify(neighbor, null, 4));
           }
         }
       }
-  
-      // No result was found - empty array signifies failure to find path.
-      return pathTo(currentNode);
+      return [pathTo(currentNode), end.edist];
     }
 function getEdist(node1, node2, min_max) {
   
@@ -301,5 +294,7 @@ var heuristics = {
 
 module.exports = {
     processNodes,
-    aStarSearch
+    aStarSearch,
+    BellmanFord,
+    eStar
 }
