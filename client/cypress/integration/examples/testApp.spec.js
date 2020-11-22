@@ -29,7 +29,7 @@ describe('MaximizeTest', () =>{
 
 describe('PercentageTest', () =>{
     it('tests that  the correct percentage is sent to backend', () =>{
-        cy.visit('https://localhost/3000')
+        cy.visit('https://localhost:3000')
         cy.contains('%')
         c.get('%').type('200').should('have.value', '200')
     })
