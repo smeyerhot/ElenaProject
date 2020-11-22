@@ -16,6 +16,7 @@ let eLat = 42.38668987817437;
 let eLong = -72.53087997436525;
 let grid2D = coords.gen2DGrid(sLat, sLong, eLat, eLong);
 let grid = grid2D[0];
+coords.addNeighbors(grid);
 let borderX = coords.getBorderX();
 let borderY = coords.getBorderY();
 let step = coords.getStep();
@@ -51,19 +52,20 @@ describe('longitude initialization for each node', function() {
 });
 
 describe('neighbors array population for each node', function() {
-    it('should contain 2-4 nodes', function() {
+    it('should contain 3-8 nodes', function() {
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 let neighbs = true;
-                if (grid[i][j].neighbors.length < 2 || grid[i][j].neighbors.length > 4) {
-                    assert.isTrue(neighbs);
+                if (grid[i][j].neighbors.length < 3 || grid[i][j].neighbors.length > 8) {
+                    neighbs = false;
                 }
+                assert.isTrue(neighbs);
             }
         }
     });
 });
 
-describe('borderX initialization', function() {
+describe('borderX initialization for each node', function() {
     it('should not be null', function() {
         assert.isNotNull(borderX);
     });
@@ -82,13 +84,16 @@ describe('borderY initialization for each node', function() {
 });
 
 describe('proper distance from neighbors', function() {
-    it('should be equal to the set step either latitudinally or longitudinally', function() {
+    it('should be equal to the set step latitudinally or longitudinally', function() {
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 for (let k = 0; k < grid[i][j].neighbors.length; k++) {
                     let stepDist = true;
-                    if (!((Math.abs((Math.abs((grid[i][j].lat).toFixed(4) - (grid[i][j].neighbors[k].lat).toFixed(4)) - step.toFixed(4)) <= 0.0001)) 
-                        || (Math.abs((Math.abs((grid[i][j].long).toFixed(4) - (grid[i][j].neighbors[j].long).toFixed(4)) - step.toFixed(4)) <= 0.0001)))) {
+                    let neighbs = grid[i][j].neighbors[k].split(",");
+                    let neighbLat = parseInt(neighbs[0]).toFixed(4);
+                    let neighbLong = parseInt(neighbs[1]).toFixed(4);
+                    if (!((Math.abs(Math.abs(grid[i][j].lat.toFixed(4) - neighbLat) - step.toFixed(4)) <= 1) 
+                        || (Math.abs(Math.abs(grid[i][j].long.toFixed(4) - neighbLong) - step.toFixed(4) <= 1)))) {
                             stepDist = false;
                     }
                     assert.isTrue(stepDist);
@@ -96,7 +101,7 @@ describe('proper distance from neighbors', function() {
             }
         }
     });
-    it('should not have neighbor with equal distance lat and long (diagonal)', function() {
+    /*it('should not have neighbor with equal distance lat and long (diagonal)', function() {
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 for (let k = 0; k < grid[i][j].neighbors.length; k++) {
@@ -105,7 +110,7 @@ describe('proper distance from neighbors', function() {
                 }
             }
         }
-    });
+    });*/
 });
 
 /*describe('elevation initialization for each node', function() {
