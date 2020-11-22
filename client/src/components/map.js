@@ -1,6 +1,7 @@
 import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet"
 import {useState, useEffect} from 'react'
-
+import dynamic from 'next/dynamic'
+const PathSummary = dynamic(()=> import('./pathsummary'), {ssr: false})
 export default function MyMap (props) {
 
     const [nodeCount, setNodeCount] = useState(0);
@@ -136,10 +137,8 @@ export default function MyMap (props) {
         
            
     }
-
-    console.log(path1)
-    console.log(path2)
     return (
+      <div className = 'map-box'>
         
       <Map 
         center={position} 
@@ -147,7 +146,7 @@ export default function MyMap (props) {
             handleClick(e);
         }}
         zoom={14} 
-        style = {{height: '84vh', width: '100%'}}
+        style = {{height: '84vh', width: '85%', display: 'inline-block', position: 'relative'}}
         >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -166,7 +165,22 @@ export default function MyMap (props) {
         {makePath(path2,"red")}
         {makePath(path3,"blue")}
 
-      </Map>
+          {markers.map((position, idx) => {
+            return <Marker key={`marker-${idx}`} position={position}>
+                    <Popup>
+                    <span>This is your node {idx} </span>
+                    </Popup>
+                
+              </Marker>
+          })}
+          
+        </Map>
+        <div className = 'summary-container'>
+        <h1 className = 'summary-title'>Path Summaries</h1>
+        {path1.length !== 0 ?  <PathSummary  paths = {{path1, path2}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
+        </div>
+        
+      </div>
     );
     }
 

@@ -1,4 +1,3 @@
-import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet"
 import {useState, useEffect} from 'react'
 import Link from 'next/link'
 export default function MapInput (props) {
