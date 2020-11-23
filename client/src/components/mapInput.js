@@ -1,7 +1,6 @@
 import {useState, useEffect} from 'react'
 import Link from 'next/link'
 export default function MapInput (props) {
-
     const [state, setState] = useState({
       'start': '',
       'end': '',
@@ -20,6 +19,9 @@ export default function MapInput (props) {
       props.onStateChange(values);
     }
     
+    function toggleSummaryPanel(){
+      props.setViewSummary(!props.viewSummary);
+    }
 
     return (
         
@@ -42,6 +44,7 @@ export default function MapInput (props) {
             <label for = "%" className = "ml-5 font-bold"> Path length (%): </label>
             <span><input id = "%" type="number" className = "input-small inline-block text-center" placeholder = "100-400" min = '100' max = '400'onChange = {(e) => setState({start: state.start, end: state.end, minMax: state.minMax, percent: e.target.value})}/></span>
             <button class = "button bg-black text-white border-black btn" onClick = {sendData}>Calculate Path </button>
+            <button class = "button bg-black text-white border-black btn" onClick = {toggleSummaryPanel}>View Path Summaries</button>
             <br/>
             <small class = "block inset-x-0 top-0 text-center font-bold">Click a start and an end point on the map, select to minimize or maximize elevation gain, input the maximum percentage of shortest path, then click "Calculate Path" to render your path.</small>
             <small class = "block inset-x-0 top-0 text-center font-bold">Click the map again to begin calculating a new path.</small>

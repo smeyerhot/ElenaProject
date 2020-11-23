@@ -16,7 +16,10 @@ export default function MyMap (props) {
     const [path2NetElev, setPath2NetElev] = useState(0);
     const [path3, setPath3] = useState([]);
     const [markers, setMarkers] = useState([]);
-
+    const [viewSummary, setViewSummary] = useState(false);
+    const [mapWidth, setMapWidth] = useState('100%');
+    
+      
 
     useEffect(()=> {
         if(nodeCount === 1){
@@ -40,6 +43,15 @@ export default function MyMap (props) {
             })
         }
     }, [markers, nodeCount]);
+
+    useEffect(() => {
+      setViewSummary(props.viewSummary);
+    }, [props.viewSummary])
+
+    useEffect(()=>{
+      let width = viewSummary ?'85%': '100%';
+      setMapWidth(width);
+    }, [viewSummary])
 
     useEffect(() => {
         if(props.state.done === true && path1.length === 0 && path2.length==0){
@@ -145,19 +157,30 @@ export default function MyMap (props) {
     }
     return (
       <div className = 'map-box'>
-        
-      <Map 
-        center={position} 
-        onClick={(e) => { 
-            handleClick(e);
-        }}
-        zoom={14} 
-        style = {{height: '84vh', width: '85%', display: 'inline-block', position: 'relative'}}
-        >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-        />
+        <Map 
+      center={position} 
+      onClick={(e) => { 
+          handleClick(e);
+      }}
+      zoom={14} 
+      style = {{height: '84vh', width: mapWidth, display: 'inline-block', position: 'relative'}}
+      >
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+      />
+
+      {markers.map((position, idx) => {
+        return <Marker key={`marker-${idx}`} position={position}>
+                <Popup>
+                <span>This is your node {idx} </span>
+                </Popup>
+            
+          </Marker>
+      })}
+      {makePath(path1,"purple")}
+      {makePath(path2,"red")}
+      {makePath(path3,"blue")}
 
         {markers.map((position, idx) => {
           return <Marker key={`marker-${idx}`} position={position}>
@@ -167,26 +190,15 @@ export default function MyMap (props) {
               
             </Marker>
         })}
-        {makePath(path1,"purple")}
-        {makePath(path2,"red")}
-        {makePath(path3,"blue")}
-
-          {markers.map((position, idx) => {
-            return <Marker key={`marker-${idx}`} position={position}>
-                    <Popup>
-                    <span>This is your node {idx} </span>
-                    </Popup>
-                
-              </Marker>
-          })}
-          
-        </Map>
+        
+      </Map>
         <div className = 'summary-container'>
         <h1 className = 'summary-title'>Path Summaries</h1>
         {path1.length !== 0 ?  <PathSummary  paths = {{path1, path1Length, path1NetElev, path2, path2Length, path2NetElev}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
         </div>
-        
-      </div>
+      
+    </div>
+      
     );
     }
 

@@ -26,12 +26,14 @@ export default function PathSummary (props) {
         <div className = 'summary-containter'>
             <br></br>
             <h2 className = 'summary-sub-title1'>Red Path:</h2>
+            <p className = 'summary-text'><small >This path was generated using an A* algorithm using a heuristic of elevation difference.</small></p>
             <p className = 'summary-text'>Red Path Node Count: {nodeCount1}</p>
             <p className = 'summary-text'>Red Path Length (mi): {path1Length}</p>
             <p className = 'summary-text'>Red Path Net Elevation (m): {path1NetElev}</p>
             <br></br>
 
             <h2 className = 'summary-sub-title2'>Purple Path:</h2>
+            <p className = 'summary-text'><small >This path was generated using a hybrid algorithm using a heuristic combining path length and elevation difference.</small></p>
             <p className = 'summary-text'>Purple Path Node Count: {nodeCount2}</p>
             <p className = 'summary-text'>Purple Path Length (mi): {path2Length}</p>
             <p className = 'summary-text'>Purple Path Net Elevation (m): {path2NetElev}</p>
