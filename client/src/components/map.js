@@ -9,7 +9,11 @@ export default function MyMap (props) {
     const [end, setEnd] = useState(null);
     const [position, setPosition] = useState([42.3868 , -72.5301]);
     const [path1, setPath1] = useState([]);
+    const [path1Length, setPath1Length] = useState(0);
+    const [path1NetElev, setPath1NetElev] = useState(0);
     const [path2, setPath2] = useState([]);
+    const [path2Length, setPath2Length] = useState(0);
+    const [path2NetElev, setPath2NetElev] = useState(0);
     const [path3, setPath3] = useState([]);
     const [markers, setMarkers] = useState([]);
 
@@ -65,7 +69,6 @@ export default function MyMap (props) {
                 })
               
                 let data = await response.json()
-                console.log(data)
                 setPath(data)
                 
 
@@ -88,7 +91,9 @@ export default function MyMap (props) {
             // setGrid(grid => [...grid, pos]);
             
           }     
-          setPath1(path1 => [...path1, end]);  
+          setPath1(path1 => [...path1, end]);
+          setPath1Length(body.grid1Length);
+          setPath1NetElev(body.grid1ElevNet);
       }
       if (body.grid2 != null) {     
       setPath2(path2 => [...path2, start]);
@@ -98,7 +103,8 @@ export default function MyMap (props) {
             }
             
         setPath2(path2 => [...path2, end]);
-
+        setPath2Length(body.grid2Length);
+        setPath2NetElev(body.grid2ElevNet);
           }
       if (body.grid3 != null) {     
       setPath3(path3=> [...path3, start]);
@@ -177,7 +183,7 @@ export default function MyMap (props) {
         </Map>
         <div className = 'summary-container'>
         <h1 className = 'summary-title'>Path Summaries</h1>
-        {path1.length !== 0 ?  <PathSummary  paths = {{path1, path2}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
+        {path1.length !== 0 ?  <PathSummary  paths = {{path1, path1Length, path1NetElev, path2, path2Length, path2NetElev}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
         </div>
         
       </div>

@@ -55,11 +55,13 @@ async function processCoords(req, res) {
         payload["grid1"] = path
         console.log(calculatePathDistance(path));
         payload["grid1Length"] = calculatePathDistance(path);
+        payload['grid1ElevNet'] = calculateNetElevation(path);
     } 
     vprocessNodes(flattenedGrid, coordToNeighbors);
     let [p,hybridDist] = [...estar(start_key,end_key,coordToNeighbors, pref, x_percent)]
     payload["grid2"] = p
     payload['grid2Length'] = calculatePathDistance(p);
+    payload['grid2ElevNet'] = calculateNetElevation(p);
     // if (dist > minDist){
     //     payload["toolong"] = true
     // }
@@ -233,6 +235,13 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
     return [betterGrid, currentBest];
 }
 
+function calculateNetElevation(path){
+    let net = 0;
+    for(let i = 0; i<path.length-1; ++i){
+        net += path[i].elevation - path[i+1].elevation;
+    }
+    return parseFloat(net.toFixed(3));
+}
 function calculatePathDistance(path){
     let dist = 0;
     for(let i = 0; i<path.length-1; ++i){
