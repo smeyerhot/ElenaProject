@@ -53,7 +53,6 @@ async function processCoords(req, res) {
     
     if (path!=null){
         payload["grid1"] = path
-        console.log(calculatePathDistance(path));
         payload["grid1Length"] = calculatePathDistance(path);
         payload['grid1ElevNet'] = calculateNetElevation(path);
     } 
