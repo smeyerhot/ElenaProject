@@ -30,7 +30,7 @@ export default function MyMap (props) {
               'start': markers[0],
               'end': '',
               'minMax':'', 
-              'percent': '', 
+              'percent': null, 
               'done': false
             })
         }
@@ -40,7 +40,7 @@ export default function MyMap (props) {
               'start': markers[0],
               'end': markers[1],
               'minMax':'', 
-              'percent': '', 
+              'percent': null, 
               'done': false
             })
         }
@@ -57,6 +57,7 @@ export default function MyMap (props) {
 
     useEffect(() => {
         if(props.state.done === true && path1.length === 0 && path2.length==0){
+          if(start && end && props.state.percent){
             let minMax = props.state.minMax;
             let percent = props.state.percent;
             async function getPath(){
@@ -88,6 +89,11 @@ export default function MyMap (props) {
 
             }
             getPath();
+          }
+          
+          else{
+            alert("Please select your start and end points, and choose your maximum path length!");
+          }
 
 
         }
