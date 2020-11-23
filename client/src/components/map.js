@@ -93,6 +93,7 @@ export default function MyMap (props) {
           
           else{
             alert("Please select your start and end points, and choose your maximum path length!");
+            props.state.done = false;
           }
 
 
