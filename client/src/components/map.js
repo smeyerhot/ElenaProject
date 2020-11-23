@@ -11,9 +11,11 @@ export default function MyMap (props) {
     const [path1, setPath1] = useState([]);
     const [path1Length, setPath1Length] = useState(0);
     const [path1NetElev, setPath1NetElev] = useState(0);
+    const [path1Shortest, setPath1Shortest] = useState(0);
     const [path2, setPath2] = useState([]);
     const [path2Length, setPath2Length] = useState(0);
     const [path2NetElev, setPath2NetElev] = useState(0);
+    const [path2Shortest, setPath2Shortest] = useState(0);
     const [path3, setPath3] = useState([]);
     const [markers, setMarkers] = useState([]);
     const [viewSummary, setViewSummary] = useState(false);
@@ -106,6 +108,7 @@ export default function MyMap (props) {
           setPath1(path1 => [...path1, end]);
           setPath1Length(body.grid1Length);
           setPath1NetElev(body.grid1ElevNet);
+          setPath1Shortest(body.grid1Shortest);
       }
       if (body.grid2 != null) {     
       setPath2(path2 => [...path2, start]);
@@ -117,6 +120,7 @@ export default function MyMap (props) {
         setPath2(path2 => [...path2, end]);
         setPath2Length(body.grid2Length);
         setPath2NetElev(body.grid2ElevNet);
+        setPath2Shortest(body.grid2Shortest);
           }
       if (body.grid3 != null) {     
       setPath3(path3=> [...path3, start]);
@@ -194,7 +198,7 @@ export default function MyMap (props) {
       </Map>
         <div className = 'summary-container'>
         <h1 className = 'summary-title'>Path Summaries</h1>
-        {path1.length !== 0 ?  <PathSummary  paths = {{path1, path1Length, path1NetElev, path2, path2Length, path2NetElev}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
+        {path1.length !== 0 ?  <PathSummary  paths = {{path1, path1Length, path1NetElev, path1Shortest, path2, path2Length, path2NetElev, path2Shortest}}></PathSummary>: <p className = 'summary-text'>No Paths Computed Yet. <br></br>Compute a path!</p>}
         </div>
       
     </div>

@@ -37,9 +37,11 @@ async function processCoords(req, res) {
         "grid1":null,
         "grid1Length":null,
         "grid1ElevNet": null,
+        "grid1Shortest": null,
         "grid2":null,
         "grid2Length":null,
         "grid2ElevNet": null,
+        "grid2Shortest": null,
         "grid3":null,
         "toolong":false
     }
@@ -55,12 +57,14 @@ async function processCoords(req, res) {
         payload["grid1"] = path
         payload["grid1Length"] = calculatePathDistance(path);
         payload['grid1ElevNet'] = calculateNetElevation(path);
+        payload['grid1Shortest'] = haversine_distance(path[0], path[path.length -1]);
     } 
     vprocessNodes(flattenedGrid, coordToNeighbors);
     let [p,hybridDist] = [...estar(start_key,end_key,coordToNeighbors, pref, x_percent)]
     payload["grid2"] = p
     payload['grid2Length'] = calculatePathDistance(p);
     payload['grid2ElevNet'] = calculateNetElevation(p);
+    payload['grid2Shortest'] = haversine_distance(p[0], p[p.length -1]);
     // if (dist > minDist){
     //     payload["toolong"] = true
     // }
