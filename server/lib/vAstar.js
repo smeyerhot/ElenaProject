@@ -54,7 +54,6 @@ function BellmanFord(startkey, endkey,dict,min_max,x_val) {
         nei.dist = heuristics.haversine_distance(nei,node) + node.dist
         nei.parent = node
       }
-      console.log(edge)
     }
   }
   //There are never any negative weight cycles because starting at ending at the same location is a weight 0 cycle.
