@@ -61,7 +61,9 @@ Front End Tests:
 
 cd client
 
-npm run test
+npm run cy-test
+
+npm run jest-test
 
 ### FWI
 

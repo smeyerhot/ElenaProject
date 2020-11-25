@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "npx cypress run"
+    "cy-test": "npx cypress run",
+    "jest-test": "npx jest"
+
   },
   "proxy": "http://localhost:5000",
   "dependencies": {
