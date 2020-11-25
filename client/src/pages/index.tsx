@@ -1,4 +1,4 @@
-import Head from 'next/head'
+
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 const DynamicMap = dynamic(() => import('../components/map'), {ssr: false});
