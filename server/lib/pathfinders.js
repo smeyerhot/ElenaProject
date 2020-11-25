@@ -69,10 +69,7 @@ function nodeToCoords(node){
 
 function processNodes(grid, dict)
 {
-    console.log('Processing nodes');
-
     var graph = [];
-    console.log('processNodes grid length'+grid.length);
     for(gridNode of grid)
     {
         var node = new nodeValue(gridNode.lat,gridNode.long,gridNode.neighbors,0,0,0,false,false,null,gridNode.elevation,Infinity,Infinity);
@@ -84,8 +81,6 @@ function processNodes(grid, dict)
 
 }
 
-// not taking into account elevation currently
-// try changing it to more better approach
 function nodeValue(lat,long,neighbors,f,g,h,closed,visited,parent,elevation,edist,dist) {
     this.lat = lat;
     this.long = long;
@@ -120,21 +115,10 @@ function getElevationHeap() {
       return node.f + node.edist;
     });
 }
-function dictMutator(dict, offset) {
-  console.log(offset)
-  for (idx in dict) {
-    console.log(dict[idx].elevation )
-    dict[idx].elevation = dict[idx].elevation - offset;
-    console.log(dict[idx].elevation)
-  }
-}
-
 
 // graph and start and end node of the grid
 function eStar(startkey, endkey, dict,min_max,x_val) {
-
       const x = x_val/100;
-
       let start = dict[startkey];
       let end =  dict[endkey];
       start.edist = 0;     
@@ -181,9 +165,7 @@ function eStar(startkey, endkey, dict,min_max,x_val) {
     }
 
 function aStarSearch(startkey, endkey, dict,min_max,x_val) {
-
       const x = x_val/100;
-
       let start = dict[startkey];
       let end =  dict[endkey];
       start.edist = 0;     
@@ -191,7 +173,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
       var openHeap = getElevationHeap(); 
       openHeap.push(start);
       start.h = heuristic(start, end); 
-
       while (openHeap.size() > 0) {
         // Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
         var currentNode = openHeap.pop();
@@ -207,12 +188,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
         for (var i = 0; i < neighbors.length; i++) {
          // find neighbor node in graph corresponding to key
           let key  = neighbors[i]
-        //  var neighbor_node = dict[key]; // currently only lat long
-          if (!dict.hasOwnProperty(key)) {
-            console.log(key)
-            console.log("Node not in graph!")
-            continue
-          }
           var neighbor = dict[key];
           if (neighbor.closed) {
             // Not a valid node to process, skip to next neighbor.
@@ -220,7 +195,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
           }
           // The escore is the shortest elevation distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-          // up to currnode+cost between curr and neighbor 
           const best = heuristics.haversine_distance(start, neighbor) * x
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
@@ -237,7 +211,6 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
             neighbor.edist = eScore;
             if (!beenVisited) {
               // Pushing to heap will put it in proper place based on the 'f' value.
-              // console.log('pushing node in heap');
               openHeap.push(neighbor);
             } else {
               // Already seen the node, but since it has been rescored we need to reorder it in the heap
@@ -248,8 +221,8 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
       }
       return [pathTo(currentNode), end.edist];
     }
+
 function getEdist(node1, node2, min_max) {
-  
   let edi = node2.elevation - node1.elevation
   if(min_max === 'Maximize') 
     edi = -edi;
@@ -279,17 +252,10 @@ var heuristics = {
         var d_latitude = lat_2-lat_1; // Radian difference (latitudes)
         var d_longitude = (node2.long-node1.long) * (Math.PI/180); // Radian difference (longitudes)
         var d = 2 * R * Math.asin(Math.sqrt(Math.sin(d_latitude/2)*Math.sin(d_latitude/2)+Math.cos(lat_1)*Math.cos(lat_2)*Math.sin(d_longitude/2)*Math.sin(d_longitude/2)));
-        // fixing it to 4 decimal values
-        // d = d.toFixed(4) // took assumption to 4 decimal places
-        // return parseInt(d);
-        //maximize elevation
-        
         return d;
 
     }
 }
-
-
 
 module.exports = {
     processNodes,
