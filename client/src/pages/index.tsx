@@ -6,9 +6,8 @@ const MapInput = dynamic(()=> import('../components/mapInput'), {ssr: false})
 
 
 export default function Home(){
-  const[state, setState] = useState({'start': '', 'end': '', 'minMax':'', 'percent': '', 'done': false})
+  const[state, setState] = useState({'start': null, 'end': null, 'minMax':'', 'percent': '', 'done': false})
   
-
 
   return (
     <div>

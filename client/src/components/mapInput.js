@@ -4,8 +4,8 @@ import Link from 'next/link'
 export default function MapInput (props) {
 
     const [state, setState] = useState({
-      'start': '',
-      'end': '',
+      'start': null,
+      'end': null,
       'minMax': '',
       'percent': ''
     });
@@ -20,6 +20,17 @@ export default function MapInput (props) {
       
       props.onStateChange(values);
     }
+    useEffect(()=> {
+      setState(
+        {
+          start: props.state.start,
+          end: props.state.end,
+          minMax: props.state.minMax,
+          percent: props.state.percent,
+          done: props.state.done
+        }
+      )
+    }, [props])
     
 
     return (
@@ -32,9 +43,9 @@ export default function MapInput (props) {
           </Link>
           <div class = "flex-1 mx-32  text-center rounded-lg">
             <label for = "startPoint" className = "ml-1 font-bold"> Start: </label>
-            <input id = "startPoint" type = "text" className = "input-large inline-block text-center" placeholder = "Start Point: [lat, lng]" value = {props.state.start} onChange = {(e) => setState({start: e.target.value, end: state.end, minMax: state.minMax, percent: state.percent})}></input>
+            <input id = "startPoint" type = "text" className = "input-large inline-block text-center" placeholder = "Start Point: [lat, lng]" value = {state.start ? state.start : ''} onChange = {(e) => setState({start: e.target.value, end: state.end, minMax: state.minMax, percent: state.percent})}></input>
             <label for = "endPoint" className = "font-bold"> End: </label>
-            <input id = "endPoint" type = "text" className = "input-large inline-block text-center" placeholder = "End Point: [lat, lng]" value = {props.state.end} onChange = {(e) => setState({start: state.start, end: e.target.value, minMax: state.minMax, percent: state.percent})}></input>
+            <input id = "endPoint" type = "text" className = "input-large inline-block text-center" placeholder = "End Point: [lat, lng]" value = {state.end ? state.end : ''} onChange = {(e) => setState({start: state.start, end: e.target.value, minMax: state.minMax, percent: state.percent})}></input>
             <label for = "minMax" className = "font-bold"> Elevation Gain: </label>
             <select id = "minMax" class="inline-block  text-center bg-white border border-gray-400 hover:border-gray-500 px-2 py-2 pr-1 rounded shadow leading-tight focus:outline-none focus:shadow-outline" onChange = {(e) => setState({start: state.start, end: state.end, minMax: e.target.value, percent: state.percent})}>
                 <option value = 'Minimize' selected>Minimize</option>
