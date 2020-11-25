@@ -36,6 +36,8 @@ PORT=5000
 
 API_KEY=<your_googlemaps_api_key>
 
+Note: Key must have 1. Maps JavaScript API and 2. Maps Elevation API enabled. https://developers.google.com/maps/documentation/javascript/elevation
+
 ####  Back in /server :
 
 cd ../
@@ -47,5 +49,23 @@ npm install
 npm run dev
 
 
+####  Run Tests :
 
+Back-End Tests:
+
+cd server
+
+npm run test
+
+Front End Tests (Make sure you have an instance of the front end application running by running npm run dev in the client directory):
+
+cd client
+
+npm run cy-test
+
+npm run jest-test
+
+### FWI
+
+Currently, the login system hashes, salts, and stores user info in our database. We also issue jwt's on the backend. The frontend has two "hidden routes" /signin and /signup. This system was created in the interest of scalability and extensibility. We didn't encorporate this functionality in our UI but the architecture is stable and offers a solid foundation for building upon.
 

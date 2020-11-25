@@ -1,8 +1,8 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import Index from '../pages/index'
+import PathSummary from '../components/pathsummary'
 
-it('renders homepage unchanged', () => {
-  const tree = renderer.create(<Index />).toJSON()
-  expect(tree).toMatchSnapshot()
-})
+it('renders correctly when there are no items', () => {
+  const tree = renderer.create(<PathSummary />).toJSON();
+  expect(tree).toMatchSnapshot();
+});

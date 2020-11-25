@@ -195,7 +195,7 @@ function aStarSearch(startkey, endkey, dict,min_max,x_val) {
           }
           // The escore is the shortest elevation distance from start to current node.
           // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-          const best = heuristics.haversine_distance(start, neighbor) * x
+          const best =heuristic(start, neighbor) * x
           var gScore = currentNode.g + heuristic(currentNode,neighbor);
           var eScore = currentNode.edist + getEdist(currentNode, neighbor, min_max);
           if (gScore > best)

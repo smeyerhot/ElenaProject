@@ -171,10 +171,10 @@ export default function MyMap (props) {
             setPath3([]);
             setNodeCount(0);
             props.onStateChange({
-              'start': '',
-              'end': '',
+              'start': null,
+              'end': null,
               'minMax':'', 
-              'percent': '', 
+              'percent': 100, 
               'done': false
             })
         }
