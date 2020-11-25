@@ -73,6 +73,7 @@ export default function MyMap (props) {
           if(start && end && props.state.percent){
             let minMax = props.state.minMax;
             let percent = props.state.percent;
+            
             async function getPath(){
               alert("Processing, please wait!");
                 let response = await fetch('http://localhost:5000/api/coords', {
@@ -100,6 +101,7 @@ export default function MyMap (props) {
                 setPath(data)
                 
             }
+            console.log("Getting Path");
             getPath();
           }
           

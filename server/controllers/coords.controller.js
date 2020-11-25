@@ -68,6 +68,7 @@ async function processCoords(req, res) {
     // if (dist > minDist){
     //     payload["toolong"] = true
     // }
+    console.log("Complete");
     res.status(200).send(payload)
    
 }
