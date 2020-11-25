@@ -29,7 +29,6 @@ const Signin: React.FunctionComponent = () => {
           auth.authenticate(data, () => {
             console.log("finished")
           })
-          // router.push(`/profile/${ data.uuid }`)
           router.push('/')
         } catch {
           setErrorMessage(body)

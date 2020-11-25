@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when there are no items 1`] = `
+<div
+  className="summary-containter"
+>
+  <br />
+  <h2
+    className="summary-sub-title1"
+  >
+    Red Path:
+  </h2>
+  <p
+    className="summary-text"
+  >
+    <small>
+      This path was generated using an A* algorithm using a heuristic of elevation difference.
+    </small>
+  </p>
+  <p
+    className="summary-text"
+  >
+    Node Count: 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    Length (mi): 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    Elevation Change (m): 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    % distance of shortest path: 
+    NaN
+  </p>
+  <br />
+  <h2
+    className="summary-sub-title2"
+  >
+    Purple Path:
+  </h2>
+  <p
+    className="summary-text"
+  >
+    <small>
+      This path was generated using a hybrid algorithm using a heuristic combining path length and elevation difference.
+    </small>
+  </p>
+  <p
+    className="summary-text"
+  >
+    Node Count: 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    Length (mi): 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    Elevation Change (m): 
+    0
+  </p>
+  <p
+    className="summary-text"
+  >
+    % distance of shortest path: 
+    NaN
+  </p>
+</div>
+`;
+
+exports[`renders homepage unchanged 1`] = `<div />`;

@@ -1,13 +1,12 @@
-import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
-import Index from '../pages/index'
+import { render, fireEvent, screen } from "@testing-library/react";
+import Nav from "../components/nav"
 
-test('renders deploy link', () => {
-//   const { getByText } = render(<Index />)
-  const { getByText } = render(<Fetch url="/signin" />)
-    fireEvent.click(screen.getByText("Hello"))
-  const linkElement = getByText(
-    
-  )
-  expect(linkElement).toBeInTheDocument()
-})
+
+describe("Navbar", () => {
+  it("renders without crashing", () => {
+    render(<Nav />);
+    expect(
+      screen.getByText("Elena")
+    ).toBeInTheDocument();
+  });
+});

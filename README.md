@@ -49,6 +49,20 @@ npm install
 npm run dev
 
 
+####  Run Tests :
+
+Back-End Tests:
+
+cd server
+
+npm run test
+
+Front End Tests:
+
+cd client
+
+npm run test
+
 ### FWI
 
 Currently, the login system hashes, salts, and stores user info in our database. We also issue jwt's on the backend. The frontend has two "hidden routes" /signin and /signup. This system was created in the interest of scalability and extensibility. We didn't encorporate this functionality in our UI but the architecture is stable and offers a solid foundation for building upon.
