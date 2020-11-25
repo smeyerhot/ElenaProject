@@ -1,7 +1,7 @@
-import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet"
-import {useState, useEffect} from 'react'
-import dynamic from 'next/dynamic'
-const PathSummary = dynamic(()=> import('./pathsummary'), {ssr: false})
+import {Map, TileLayer, Marker, Popup, Polyline} from "react-leaflet";
+import {useState, useEffect} from 'react';
+import dynamic from 'next/dynamic';
+const PathSummary = dynamic(()=> import('./pathsummary'), {ssr: false});
 export default function MyMap (props) {
 
     //nodeCount represents the number of markers on the map
