@@ -28,7 +28,6 @@ const Signup: React.FunctionComponent = () => {
         const body = await res.text();
         try {
           const data: UserData = JSON.parse(body);
-          // router.push(`/profile/${ data.uuid }`)
           router.push('/')
         } catch {
           setErrorMessage(body)

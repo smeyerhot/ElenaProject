@@ -9,7 +9,7 @@ let step = 3/3600;
 let borderX;
 let borderY;
 
-const vsearch = require('../lib/vAstar'); 
+const vsearch = require('../lib/pathfinders'); 
 const estar = vsearch.eStar;
 const vprocessNodes = vsearch.processNodes; 
 const hybrid = vsearch.aStarSearch;
