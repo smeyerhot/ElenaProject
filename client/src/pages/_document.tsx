@@ -1,9 +1,6 @@
 import React from 'react'
-
-
 import Document, { Head, Main, NextScript } from 'next/document'
 
-import Nav from '@/components/nav'
 
 export default class MyDocument extends Document {
   render(): React.ReactElement {

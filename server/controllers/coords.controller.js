@@ -9,7 +9,7 @@ let step = 3/3600;
 let borderX;
 let borderY;
 
-const vsearch = require('../lib/vAstar'); 
+const vsearch = require('../lib/pathfinders'); 
 const estar = vsearch.eStar;
 const vprocessNodes = vsearch.processNodes; 
 const hybrid = vsearch.aStarSearch;
@@ -35,7 +35,13 @@ async function processCoords(req, res) {
     let end_key = [info.endLat,info.endLong].join(",")
     let payload = {
         "grid1":null,
+        "grid1Length":null,
+        "grid1ElevNet": null,
+        "grid1Shortest": null,
         "grid2":null,
+        "grid2Length":null,
+        "grid2ElevNet": null,
+        "grid2Shortest": null,
         "grid3":null,
         "toolong":false
     }
@@ -49,10 +55,16 @@ async function processCoords(req, res) {
     
     if (path!=null){
         payload["grid1"] = path
+        payload["grid1Length"] = calculatePathDistance(path);
+        payload['grid1ElevNet'] = calculateNetElevation(path);
+        payload['grid1Shortest'] = haversine_distance(path[0], path[path.length -1]);
     } 
     vprocessNodes(flattenedGrid, coordToNeighbors);
     let [p,hybridDist] = [...estar(start_key,end_key,coordToNeighbors, pref, x_percent)]
     payload["grid2"] = p
+    payload['grid2Length'] = calculatePathDistance(p);
+    payload['grid2ElevNet'] = calculateNetElevation(p);
+    payload['grid2Shortest'] = haversine_distance(p[0], p[p.length -1]);
     // if (dist > minDist){
     //     payload["toolong"] = true
     // }
@@ -224,6 +236,32 @@ function gen2DGrid(startLat, startLong, endLat, endLong){
         }
     }
     return [betterGrid, currentBest];
+}
+
+function calculateNetElevation(path){
+    let net = 0;
+    for(let i = 0; i<path.length-1; ++i){
+        net += path[i].elevation - path[i+1].elevation;
+    }
+    return parseFloat(net.toFixed(3));
+}
+function calculatePathDistance(path){
+    let dist = 0;
+    for(let i = 0; i<path.length-1; ++i){
+        dist += haversine_distance(path[i], path[i+1]);
+    }
+    return parseFloat(dist.toFixed(3));
+}
+function haversine_distance(node1,node2) {
+    var R = 3958.8; // Radius of the Earth in miles
+    var lat_1 = node1.lat * (Math.PI/180); // degrees to radians
+    var lat_2 = node2.lat * (Math.PI/180); // degrees to radians
+    var d_latitude = lat_2-lat_1; // Radian difference (latitudes)
+    var d_longitude = (node2.long-node1.long) * (Math.PI/180); // Radian difference (longitudes)
+    var d = 2 * R * Math.asin(Math.sqrt(Math.sin(d_latitude/2)*Math.sin(d_latitude/2)+Math.cos(lat_1)*Math.cos(lat_2)*Math.sin(d_longitude/2)*Math.sin(d_longitude/2)));
+    
+    return d;
+
 }
 
 function getBorderX() {
