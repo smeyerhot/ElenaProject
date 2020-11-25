@@ -27,7 +27,7 @@ context('TestApp', () => {
     describe('PercentageTest', () =>{
         it('tests that  the correct percentage is sent to backend', () =>{
             cy.visit('http://localhost:3000')
-            cy.get('[id = "%"]').type('200').should('have.value', '200')
+            cy.get('[id = "%"]').clear().type('200').should('have.value', '200')
         })
     })
 });
