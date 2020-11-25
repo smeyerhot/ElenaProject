@@ -8,7 +8,7 @@ const MapInput = dynamic(()=> import('../components/mapInput'), {ssr: false})
 export default function Home(){
   const [state, setState] = useState({'start': '', 'end': '', 'minMax':'', 'percent': '', 'done': false})
   const [viewSummary, setViewSummary] = useState(false);
-
+  
   return (
     <div>
       

@@ -99,7 +99,6 @@ export default function MyMap (props) {
                 let data = await response.json()
                 setPath(data)
                 
-
             }
             getPath();
           }
@@ -171,10 +170,10 @@ export default function MyMap (props) {
             setPath3([]);
             setNodeCount(0);
             props.onStateChange({
-              'start': null,
-              'end': null,
+              'start': '',
+              'end': '',
               'minMax':'', 
-              'percent': 100, 
+              'percent': '', 
               'done': false
             })
         }
