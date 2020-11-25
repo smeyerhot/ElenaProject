@@ -4,25 +4,35 @@ import dynamic from 'next/dynamic'
 const PathSummary = dynamic(()=> import('./pathsummary'), {ssr: false})
 export default function MyMap (props) {
 
+    //nodeCount represents the number of markers on the map
     const [nodeCount, setNodeCount] = useState(0);
+    //start is the start point of the path
     const [start, setStart] = useState(null);
+    //end is the end point of the path
     const [end, setEnd] = useState(null);
+    //position is the position at which the map originally renders, currently being set to UMass Campus
     const [position, setPosition] = useState([42.3868 , -72.5301]);
+    //path1 is where are purple path is stored, and each value below it represents the path length, net elevation change of that path, and the shortest path between the start and the end 
     const [path1, setPath1] = useState([]);
     const [path1Length, setPath1Length] = useState(0);
     const [path1NetElev, setPath1NetElev] = useState(0);
     const [path1Shortest, setPath1Shortest] = useState(0);
+    //path2 is where are red path is stored, and each value below it represents the path length, net elevation change of that path, and the shortest path between the start and the end
     const [path2, setPath2] = useState([]);
     const [path2Length, setPath2Length] = useState(0);
     const [path2NetElev, setPath2NetElev] = useState(0);
     const [path2Shortest, setPath2Shortest] = useState(0);
+    //path3 is where the blue path is stored, however it is often not used as this is for our 
+    //Bellman Ford algorithm that generally takes too long to run and only returns if a path is found within a few seconds
     const [path3, setPath3] = useState([]);
+    //markers is an array of the marker points that we display on the map
     const [markers, setMarkers] = useState([]);
+    //viewSummary is the state of showing or not showing the summary panel
     const [viewSummary, setViewSummary] = useState(false);
+    //mapWidth sets the map size of the map, which is defaulted to 100% screen width.
     const [mapWidth, setMapWidth] = useState('100%');
     
-      
-
+    //This hook sets the start and end state values and updates the props we are sending for our input component
     useEffect(()=> {
         if(nodeCount === 1){
             setStart(markers[0]);
@@ -45,16 +55,19 @@ export default function MyMap (props) {
             })
         }
     }, [markers, nodeCount]);
-
+    
+    //this hook updates the summary panel state value when the input button is clicked
     useEffect(() => {
       setViewSummary(props.viewSummary);
     }, [props.viewSummary])
-
+    
+    //this hook updates the width of the map when the view Summary button is clicked
     useEffect(()=>{
       let width = viewSummary ?'85%': '100%';
       setMapWidth(width);
     }, [viewSummary])
-
+    
+    //this hook is where we fetch our paths once we have all of the needed information from the user
     useEffect(() => {
         if(props.state.done === true && path1.length === 0 && path2.length==0){
           if(start && end && props.state.percent){
@@ -101,6 +114,7 @@ export default function MyMap (props) {
         
     });
 
+    //this function sets our path values with the values that are returned from the fetch request above, as well as the necessary information of the path
     function setPath(body) {
       if (body.grid1 != null) {
         setPath1(path1 => [...path1, start]);
@@ -141,7 +155,8 @@ export default function MyMap (props) {
           }
           
         }
-    
+
+    //this function handles the user clicking on the map
     function handleClick(e){
         if(nodeCount <2){
 
@@ -166,6 +181,7 @@ export default function MyMap (props) {
         
            
     }
+
     return (
       <div className = 'map-box'>
         <Map 
@@ -213,12 +229,12 @@ export default function MyMap (props) {
     );
     }
 
-    
-function makePath(path,color) {
-  return path.map((position, idx) => {
-              if(idx < path.length-1){
-                  let line = [[position.lat, position.lng], [path[idx+1].lat, path[idx+1].lng]];
-                  return <Polyline key = {idx} color = {color} positions = {line}></Polyline>
-              }
-          })
-        } 
+  //this function is called to render the path lines on the map
+  function makePath(path,color) {
+    return path.map((position, idx) => {
+      if(idx < path.length-1){
+        let line = [[position.lat, position.lng], [path[idx+1].lat, path[idx+1].lng]];
+        return <Polyline key = {idx} color = {color} positions = {line}></Polyline>
+      }
+    })
+  } 
