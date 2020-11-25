@@ -57,7 +57,7 @@ cd server
 
 npm run test
 
-Front End Tests:
+Front End Tests (Make sure you have an instance of the front end application running by running npm run dev in the client directory):
 
 cd client
 
