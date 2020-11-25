@@ -5,7 +5,7 @@ export default function MapInput (props) {
       'start': null,
       'end': null,
       'minMax': '',
-      'percent': ''
+      'percent': 100
     });
     function sendData(){
       let values = {
@@ -52,8 +52,8 @@ export default function MapInput (props) {
                 <option value = 'Minimize' selected>Minimize</option>
                 <option value = 'Maximize'>Maximize</option>
             </select>
-            <label htmlFor = "%" className = "ml-5 font-bold"> Path length (%): </label>
-            <span><input id = "%" type="number" className = "input-small inline-block text-center" placeholder = "100-400" min = '100' max = '400'onChange = {(e) => setState({start: state.start, end: state.end, minMax: state.minMax, percent: e.target.value})}/></span>
+            <label htmlFor = "%" className = "ml-5 font-bold" > Path length (%): </label>
+            <span><input id = "%" type="number" className = "input-small inline-block text-center" value = {state.percent ? state.percent : null} placeholder = "100-400" min = '100' max = '400'onChange = {(e) => setState({start: state.start, end: state.end, minMax: state.minMax, percent: e.target.value})}/></span>
             <button className = "button bg-black text-white border-black btn" onClick = {sendData}>Calculate Path </button>
             <button className = "button bg-black text-white border-black btn" onClick = {toggleSummaryPanel}>View Path Summaries</button>
             <br/>
