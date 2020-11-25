@@ -80,5 +80,3 @@ exports[`renders correctly when there are no items 1`] = `
   </p>
 </div>
 `;
-
-exports[`renders homepage unchanged 1`] = `<div />`;
