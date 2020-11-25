@@ -174,7 +174,7 @@ export default function MyMap (props) {
               'start': null,
               'end': null,
               'minMax':'', 
-              'percent': '', 
+              'percent': 100, 
               'done': false
             })
         }
